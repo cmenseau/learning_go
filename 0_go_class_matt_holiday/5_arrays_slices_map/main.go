@@ -10,7 +10,8 @@ import (
 )
 
 func main() {
-	number_of_unique_words()
+	//number_of_unique_words()
+	array_slices_map_properties()
 }
 
 // printing 5 most common words of a text given in stdin
@@ -52,6 +53,8 @@ func array_slices_map_properties() {
 	fmt.Printf("%v %[1]T\n", a)
 	b := [4]int{}
 	fmt.Printf("%v %[1]T\n", b)
+	b2 := [4]int{1, 2} // partial init, rest will be zero val of int
+	fmt.Printf("%v %[1]T\n", b2)
 	var c = [4]int{1, 2, 3, 4}
 	fmt.Printf("%v %[1]T\n", c)
 	var d [4]int = [4]int{}
