@@ -1,6 +1,7 @@
 package main
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -18,7 +19,7 @@ func get_output_line(keyword string, line string, search search_info) string {
 }
 
 // returns string : output line
-// returns [][2]int : indexes_to_highlight
+// returns [][2]int : indexes_to_highlight ([]byte indexes)
 func line_selector_pipeline(keyword string, line string, search search_info) (string, [][2]int) {
 
 	var indexes = get_matching_pattern_indexes(keyword, line)
@@ -138,35 +139,69 @@ func apply_match_granularity(keyword string,
 func apply_case_sensitive_selection(keyword string, line string, indexes [][2]int) [][2]int {
 	case_sensitive_indexes := [][2]int{}
 
+	keyword_escape_removed := turn_bre_syntax_in_go_syntax(keyword)
+	re, _ := regexp.Compile(keyword_escape_removed)
+	// TODO err management
+
 	for _, idx := range indexes {
 		start := idx[0]
 		stop := idx[1]
-		if line[start:stop] == keyword {
+		if re.MatchString(line[start:stop]) {
 			case_sensitive_indexes = append(case_sensitive_indexes, idx)
 		}
+
+		//TODO what about cases when keyword contains regular expression using surrounding context
 	}
 	return case_sensitive_indexes
 }
 
 func get_matching_pattern_indexes(keyword string, line string) [][2]int {
 	var indexes [][2]int
+	// TODO turn this into [][]int like in regexp package ??
 
-	var lower_keyword = strings.ToLower(keyword)
+	keyword_escape_removed := turn_bre_syntax_in_go_syntax(keyword)
+
+	var lower_keyword = strings.ToLower(keyword_escape_removed)
 	var lower_line = strings.ToLower(line)
 
 	curr_line := lower_line
-	curr_idx := strings.Index(curr_line, lower_keyword)
 
-	// while we find the keyword pattern, we add its index in the indexes list
-	for curr_idx != -1 {
-		indexes = append(indexes, [2]int{curr_idx, curr_idx + len(lower_keyword)})
-		curr_line = lower_line[curr_idx+len(lower_keyword):]
-		next_keyword_idx := strings.Index(curr_line, lower_keyword)
-		if next_keyword_idx == -1 {
-			curr_idx = -1
-		} else {
-			curr_idx = next_keyword_idx + curr_idx + len(lower_keyword)
+	re, err := regexp.Compile(lower_keyword)
+	if err == nil {
+		for _, idx_pair := range re.FindAllStringIndex(curr_line, -1) {
+			indexes = append(indexes, [2]int{idx_pair[0], idx_pair[1]})
 		}
+	} else {
+		// TODO
 	}
 	return indexes
+}
+
+func turn_bre_syntax_in_go_syntax(keyword string) string {
+
+	// replace \| \? \+ \( \) \{ \}
+	// by      |   ?  +  (  )  {  }
+
+	re_escape := regexp.MustCompile(`\\\||\\\?|\\\+|\\\(|\\\)|\\\{|\\\}`)
+	keyword_escape_removed := re_escape.ReplaceAllStringFunc(keyword, func(s string) string {
+		switch s {
+		case `\|`:
+			return `|`
+		case `\?`:
+			return `?`
+		case `\+`:
+			return `+`
+		case `\(`:
+			return `(`
+		case `\)`:
+			return `)`
+		case `\{`:
+			return `{`
+		case `\}`:
+			return `}`
+		default:
+			return s
+		}
+	})
+	return keyword_escape_removed
 }

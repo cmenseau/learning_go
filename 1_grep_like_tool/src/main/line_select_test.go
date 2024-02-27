@@ -304,3 +304,109 @@ func TestSelectInsensitiveWords(test *testing.T) {
 		}
 	}
 }
+
+func TestSelectRegExpKeyword(test *testing.T) {
+	var subtests = []struct {
+		keyword string
+		text    string
+		exp_out string
+		col_out [][2]int
+	}{
+		{
+			keyword: `l\|t`,
+			text:    "loutre",
+			exp_out: "loutre",
+			col_out: [][2]int{{0, 1}, {3, 4}},
+		},
+		{
+			keyword: `|`,
+			text:    "loutre",
+			exp_out: "",
+			col_out: [][2]int{},
+		},
+		{
+			keyword: `a\(b\|c\)d`,
+			text:    "a abd acd abc",
+			exp_out: "a abd acd abc",
+			col_out: [][2]int{{2, 5}, {6, 9}},
+		},
+		{
+			keyword: `é\+`,
+			text:    "éé èèè é ",
+			exp_out: "éé èèè é ",
+			col_out: [][2]int{{0, 4}, {12, 14}},
+		},
+		{
+			keyword: `ds\?`,
+			text:    "adventure and making new friends.",
+			exp_out: "adventure and making new friends.",
+			col_out: [][2]int{{1, 2}, {12, 13}, {30, 32}},
+		},
+		{
+			keyword: `ds\+`,
+			text:    "adventure and making new friends.",
+			exp_out: "adventure and making new friends.",
+			col_out: [][2]int{{30, 32}},
+		},
+		{
+			keyword: `\(D\|d\)`,
+			text:    "Dis-donc tu es bien dodu",
+			exp_out: "Dis-donc tu es bien dodu",
+			col_out: [][2]int{{0, 1}, {4, 5}, {20, 21}, {22, 23}},
+		},
+		{
+			keyword: ".",
+			text:    "ab+",
+			exp_out: "ab+",
+			col_out: [][2]int{{0, 1}, {1, 2}, {2, 3}},
+		},
+		{
+			keyword: ".*",
+			text:    "A fox called Foxy.",
+			exp_out: "A fox called Foxy.",
+			col_out: [][2]int{{0, 18}},
+		},
+		{
+			keyword: `d\{2\}`,
+			text:    "hidden door",
+			exp_out: "hidden door",
+			col_out: [][2]int{{2, 4}},
+		},
+		{
+			keyword: `[abc]`,
+			text:    "but also lasting bonds",
+			exp_out: "but also lasting bonds",
+			col_out: [][2]int{{0, 1}, {4, 5}, {10, 11}, {17, 18}},
+		},
+		{
+			keyword: `\"`,
+			text:    `Title: "Fantastic Fox Finds Friends"`,
+			exp_out: `Title: "Fantastic Fox Finds Friends"`,
+			col_out: [][2]int{{7, 8}, {35, 36}},
+		},
+		{
+			keyword: `^A`,
+			text:    `A Big Ananas`,
+			exp_out: `A Big Ananas`,
+			col_out: [][2]int{{0, 1}},
+		},
+		{
+			keyword: `s$`,
+			text:    `saucisses`,
+			exp_out: `saucisses`,
+			col_out: [][2]int{{8, 9}},
+		},
+	}
+	search := search_info{}
+
+	for _, subtest := range subtests {
+		var str_out, idx_out = line_selector_pipeline(subtest.keyword, subtest.text, search)
+
+		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
+				subtest.exp_out, subtest.col_out,
+				subtest.keyword, subtest.text,
+				str_out, idx_out)
+		}
+	}
+}
