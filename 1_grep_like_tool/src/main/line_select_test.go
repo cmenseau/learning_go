@@ -349,6 +349,12 @@ func TestSelectRegExpKeyword(test *testing.T) {
 			col_out: [][2]int{{30, 32}},
 		},
 		{
+			keyword: `ab*`,
+			text:    "a ab abbb baa",
+			exp_out: "a ab abbb baa",
+			col_out: [][2]int{{0, 1}, {2, 4}, {5, 9}, {11, 12}, {12, 13}},
+		},
+		{
 			keyword: `\(D\|d\)`,
 			text:    "Dis-donc tu es bien dodu",
 			exp_out: "Dis-donc tu es bien dodu",
@@ -379,6 +385,24 @@ func TestSelectRegExpKeyword(test *testing.T) {
 			col_out: [][2]int{{0, 1}, {4, 5}, {10, 11}, {17, 18}},
 		},
 		{
+			keyword: `[^abc]`,
+			text:    "but also",
+			exp_out: "but also",
+			col_out: [][2]int{{1, 2}, {2, 3}, {3, 4}, {5, 6}, {6, 7}, {7, 8}},
+		},
+		{
+			keyword: `[[:blank:]]`,
+			text:    `Title: "Fantastic Fox Finds Friends"`,
+			exp_out: `Title: "Fantastic Fox Finds Friends"`,
+			col_out: [][2]int{{6, 7}, {17, 18}, {21, 22}, {27, 28}},
+		},
+		{
+			keyword: `[[:punct:]]`,
+			text:    `Title: "Fantastic Fox Finds Friends"`,
+			exp_out: `Title: "Fantastic Fox Finds Friends"`,
+			col_out: [][2]int{{5, 6}, {7, 8}, {35, 36}},
+		},
+		{
 			keyword: `\"`,
 			text:    `Title: "Fantastic Fox Finds Friends"`,
 			exp_out: `Title: "Fantastic Fox Finds Friends"`,
@@ -394,6 +418,12 @@ func TestSelectRegExpKeyword(test *testing.T) {
 			keyword: `s$`,
 			text:    `saucisses`,
 			exp_out: `saucisses`,
+			col_out: [][2]int{{8, 9}},
+		},
+		{
+			keyword: `\<au\>`,
+			text:    `saucisse au poulet`,
+			exp_out: `saucisse au poulet`,
 			col_out: [][2]int{{8, 9}},
 		},
 	}
