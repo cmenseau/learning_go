@@ -12,6 +12,13 @@ Supported options :
 - -x : match whole line
 - -v : reverse (get lines not matching)
 
+Keyword format : Keyword is understood as a regexp (BRE basic format)
+
+Known limitations : 
+- \\<
+- \\>
+- |
+
 Run tests with
 ```
 cd src/main
