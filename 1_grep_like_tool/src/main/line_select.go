@@ -17,8 +17,9 @@ func get_output_line(keyword string, line string, search search_info) string {
 	return color_results(out_line, indexes_to_highlight)
 }
 
+// returns string : output line
+// returns [][2]int : indexes_to_highlight
 func line_selector_pipeline(keyword string, line string, search search_info) (string, [][2]int) {
-	var output = ""
 
 	var indexes = get_matching_pattern_indexes(keyword, line)
 
@@ -28,21 +29,7 @@ func line_selector_pipeline(keyword string, line string, search search_info) (st
 
 	indexes = apply_match_granularity(keyword, line, indexes, search.match_granularity)
 
-	if search.invert_matching {
-		// empty matches : line should be displayed, no highlight
-		// matches found : line should not be displayed
-		if len(indexes) != 0 {
-			output = ""
-			indexes = [][2]int{}
-		} else {
-			output = line + "\n"
-		}
-	} else {
-		if len(indexes) > 0 {
-			output = line + "\n"
-		}
-	}
-	return output, indexes
+	return apply_invert_matching(line, indexes, search.invert_matching)
 }
 
 func color_results(line string, indexes_to_highlight [][2]int) string {
@@ -65,6 +52,28 @@ func color_results(line string, indexes_to_highlight [][2]int) string {
 	}
 
 	return line_output + line[prev_end:]
+}
+
+func apply_invert_matching(
+	line string,
+	indexes [][2]int,
+	invert_matching bool) (string, [][2]int) {
+
+	var output = ""
+	if invert_matching {
+		// empty matches : line should be displayed, no highlight
+		// matches found : line should not be displayed
+		if len(indexes) != 0 {
+			output = ""
+			indexes = [][2]int{}
+		} else {
+			output = line
+		}
+	} else if len(indexes) > 0 {
+		// at least 1 thing found : line should be displayed
+		output = line
+	}
+	return output, indexes
 }
 
 func apply_match_granularity(keyword string,

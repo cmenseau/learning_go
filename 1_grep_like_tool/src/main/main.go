@@ -45,7 +45,7 @@ func go_through_files(
 					if print_filename {
 						line_output = color_magenta(filename) + color_cyan(":") + line_output
 					}
-					output += line_output
+					output += line_output + "\n"
 				}
 			}
 		}

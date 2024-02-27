@@ -15,7 +15,7 @@ func TestSelectHightlight(test *testing.T) {
 		{
 			keyword: "lo",
 			text:    "loutre",
-			exp_out: "loutre\n",
+			exp_out: "loutre",
 			col_out: [][2]int{{0, 2}},
 		},
 		{
@@ -26,7 +26,7 @@ func TestSelectHightlight(test *testing.T) {
 		{
 			keyword: "é",
 			text:    "canapé",
-			exp_out: "canapé\n",
+			exp_out: "canapé",
 			col_out: [][2]int{{5, 7}}, // é is 2 bytes
 		},
 		{
@@ -37,7 +37,7 @@ func TestSelectHightlight(test *testing.T) {
 		{
 			keyword: "lo",
 			text:    "loutre à clou",
-			exp_out: "loutre à clou\n",
+			exp_out: "loutre à clou",
 			col_out: [][2]int{{0, 2}, {11, 13}}, // à is 2 bytes
 		},
 	}
@@ -65,25 +65,25 @@ func TestSelectHightlightInsensitive(test *testing.T) {
 		{
 			keyword: "lo",
 			text:    "loutre",
-			exp_out: "loutre\n",
+			exp_out: "loutre",
 			col_out: [][2]int{{0, 2}},
 		},
 		{
 			keyword: "lo",
 			text:    "Loutre",
-			exp_out: "Loutre\n",
+			exp_out: "Loutre",
 			col_out: [][2]int{{0, 2}},
 		},
 		{
 			keyword: "é",
 			text:    "canapé",
-			exp_out: "canapé\n",
+			exp_out: "canapé",
 			col_out: [][2]int{{5, 7}}, // é is 2 bytes
 		},
 		{
 			keyword: "É",
 			text:    "canapé",
-			exp_out: "canapé\n",
+			exp_out: "canapé",
 			col_out: [][2]int{{5, 7}}, // é is 2 bytes
 		},
 		{
@@ -122,7 +122,7 @@ func TestSelectReverse(test *testing.T) {
 		{
 			keyword: "lo",
 			text:    "Loutre",
-			exp_out: "Loutre\n",
+			exp_out: "Loutre",
 		},
 		{
 			keyword: "é",
@@ -132,7 +132,7 @@ func TestSelectReverse(test *testing.T) {
 		{
 			keyword: "abc",
 			text:    "loutre",
-			exp_out: "loutre\n",
+			exp_out: "loutre",
 		},
 	}
 
@@ -165,7 +165,7 @@ func TestSelectWholeLine(test *testing.T) {
 		{
 			keyword: "Loutre",
 			text:    "Loutre",
-			exp_out: "Loutre\n",
+			exp_out: "Loutre",
 			col_out: [][2]int{{0, 6}},
 		},
 		{
@@ -208,7 +208,7 @@ func TestSelectWords(test *testing.T) {
 		{
 			keyword: "Loutre",
 			text:    "Loutre",
-			exp_out: "Loutre\n",
+			exp_out: "Loutre",
 			col_out: [][2]int{{0, 6}},
 		},
 		{
@@ -224,13 +224,13 @@ func TestSelectWords(test *testing.T) {
 		{
 			keyword: "fox",
 			text:    "A fox called foxy",
-			exp_out: "A fox called foxy\n",
+			exp_out: "A fox called foxy",
 			col_out: [][2]int{{2, 5}},
 		},
 		{
 			keyword: "user_1",
 			text:    "user1 user10 user_10 user_1 user_1_1",
-			exp_out: "user1 user10 user_10 user_1 user_1_1\n",
+			exp_out: "user1 user10 user_10 user_1 user_1_1",
 			col_out: [][2]int{{21, 27}},
 		},
 	}
@@ -263,13 +263,13 @@ func TestSelectInsensitiveWords(test *testing.T) {
 		{
 			keyword: "Loutre",
 			text:    "Loutre",
-			exp_out: "Loutre\n",
+			exp_out: "Loutre",
 			col_out: [][2]int{{0, 6}},
 		},
 		{
 			keyword: "Canapé",
 			text:    "canapé",
-			exp_out: "canapé\n",
+			exp_out: "canapé",
 			col_out: [][2]int{{0, 7}},
 		},
 		{
@@ -280,13 +280,13 @@ func TestSelectInsensitiveWords(test *testing.T) {
 		{
 			keyword: "Fox",
 			text:    "A fox called Foxy",
-			exp_out: "A fox called Foxy\n",
+			exp_out: "A fox called Foxy",
 			col_out: [][2]int{{2, 5}},
 		},
 		{
 			keyword: "user_1",
 			text:    "user1 user10 user_10 user_1 user_1_1",
-			exp_out: "user1 user10 user_10 user_1 user_1_1\n",
+			exp_out: "user1 user10 user_10 user_1 user_1_1",
 			col_out: [][2]int{{21, 27}},
 		},
 	}
