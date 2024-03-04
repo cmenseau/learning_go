@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -44,10 +45,9 @@ func main() {
 		err    error
 		cnt    int
 		fails  int
-		data   []byte
 	)
 
-	if len(os.Args) > 0 {
+	if len(os.Args) > 1 {
 		output, err = os.Create(os.Args[1])
 
 		if err != nil {
@@ -56,6 +56,9 @@ func main() {
 		}
 
 		defer output.Close()
+	} else {
+		fmt.Fprintln(os.Stderr, "no file given")
+		os.Exit(-1)
 	}
 
 	// the output will be in the form of a JSON array,
@@ -74,19 +77,17 @@ func main() {
 		comic_data := getOne(i)
 
 		if len(comic_data) != 0 {
-			data = append(data, comic_data...)
 
 			if i-start < 20 {
-				data = append(data, byte(','))
+				comic_data = append(comic_data, byte(','))
 			}
+			io.Copy(output, bytes.NewBuffer(comic_data))
 			cnt++
 		} else {
 			fails++
 		}
 
 	}
-
-	output.Write(data)
 
 	fmt.Fprintf(os.Stderr, "read %d comics\n", cnt)
 	fmt.Fprintf(os.Stderr, "read fail %d comics\n", fails)
