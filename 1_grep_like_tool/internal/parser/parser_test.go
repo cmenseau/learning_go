@@ -1,6 +1,7 @@
-package main
+package grep_parser
 
 import (
+	grep_line_select "main/internal/line_select"
 	"slices"
 	"testing"
 )
@@ -10,7 +11,7 @@ func TestParser(test *testing.T) {
 		args      []string
 		pattern   string
 		filenames []string
-		search    search_info
+		search    grep_line_select.SearchInfo
 	}{
 		{
 			args:      []string{"lo", "a.txt"},
@@ -21,48 +22,48 @@ func TestParser(test *testing.T) {
 			args:      []string{"-i", "lo", "a.txt"},
 			pattern:   "lo",
 			filenames: []string{"a.txt"},
-			search:    search_info{case_insensitive: true},
+			search:    grep_line_select.SearchInfo{CaseInsensitive: true},
 		},
 		{
 			args:      []string{"-ix", "lo", "a.txt"},
 			pattern:   "lo",
 			filenames: []string{"a.txt"},
-			search:    search_info{case_insensitive: true, match_granularity: "line"},
+			search:    grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line"},
 		},
 		{
 			args:      []string{"-w", "lo", "a.txt", "b.txt", "c.txt"},
 			pattern:   "lo",
 			filenames: []string{"a.txt", "b.txt", "c.txt"},
-			search:    search_info{match_granularity: "word"},
+			search:    grep_line_select.SearchInfo{MatchGranularity: "word"},
 		},
 		{
 			args:      []string{"-iwx", "lo", "a.txt"},
 			pattern:   "lo",
 			filenames: []string{"a.txt"},
-			search:    search_info{case_insensitive: true, match_granularity: "line"},
+			search:    grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line"},
 		},
 		{
 			args:      []string{"-ixw", "lo", "a.txt"},
 			pattern:   "lo",
 			filenames: []string{"a.txt"},
-			search:    search_info{case_insensitive: true, match_granularity: "line"},
+			search:    grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line"},
 		},
 		{
 			args:      []string{"-wv", "lo", "a.txt"},
 			pattern:   "lo",
 			filenames: []string{"a.txt"},
-			search:    search_info{invert_matching: true, match_granularity: "word"},
+			search:    grep_line_select.SearchInfo{InvertMatching: true, MatchGranularity: "word"},
 		},
 		{
 			args:      []string{"-ixv", "whatever", "a.txt"},
 			pattern:   "whatever",
 			filenames: []string{"a.txt"},
-			search:    search_info{case_insensitive: true, match_granularity: "line", invert_matching: true},
+			search:    grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line", InvertMatching: true},
 		},
 	}
 
 	for _, subtest := range subtests {
-		var pattern_out, filenames_out, search_out = parse_args(subtest.args)
+		var pattern_out, filenames_out, search_out = ParseArgs(subtest.args)
 
 		if pattern_out != subtest.pattern ||
 			!slices.Equal(filenames_out, subtest.filenames) ||

@@ -1,4 +1,4 @@
-package main
+package grep_line_select
 
 import (
 	"slices"
@@ -41,10 +41,10 @@ func TestSelectHightlight(test *testing.T) {
 			col_out: [][2]int{{0, 2}, {11, 13}}, // à is 2 bytes
 		},
 	}
-	search := search_info{}
+	search := SearchInfo{}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = line_selector_pipeline(subtest.keyword, subtest.text, search)
+		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
 		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
@@ -93,10 +93,10 @@ func TestSelectHightlightInsensitive(test *testing.T) {
 		},
 	}
 
-	search := search_info{case_insensitive: true}
+	search := SearchInfo{CaseInsensitive: true}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = line_selector_pipeline(subtest.keyword, subtest.text, search)
+		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
 		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
@@ -136,10 +136,10 @@ func TestSelectReverse(test *testing.T) {
 		},
 	}
 
-	search := search_info{invert_matching: true}
+	search := SearchInfo{InvertMatching: true}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = line_selector_pipeline(subtest.keyword, subtest.text, search)
+		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
 		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
@@ -179,10 +179,10 @@ func TestSelectWholeLine(test *testing.T) {
 			exp_out: "",
 		},
 	}
-	search := search_info{match_granularity: "line"}
+	search := SearchInfo{MatchGranularity: "line"}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = line_selector_pipeline(subtest.keyword, subtest.text, search)
+		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
 		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
@@ -234,10 +234,10 @@ func TestSelectWords(test *testing.T) {
 			col_out: [][2]int{{21, 27}},
 		},
 	}
-	search := search_info{match_granularity: "word"}
+	search := SearchInfo{MatchGranularity: "word"}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = line_selector_pipeline(subtest.keyword, subtest.text, search)
+		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
 		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
@@ -290,11 +290,11 @@ func TestSelectInsensitiveWords(test *testing.T) {
 			col_out: [][2]int{{21, 27}},
 		},
 	}
-	search := search_info{match_granularity: "word"}
-	search.case_insensitive = true
+	search := SearchInfo{MatchGranularity: "word"}
+	search.CaseInsensitive = true
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = line_selector_pipeline(subtest.keyword, subtest.text, search)
+		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
 		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
@@ -427,10 +427,10 @@ func TestSelectRegExpKeyword(test *testing.T) {
 			col_out: [][2]int{{8, 9}},
 		},
 	}
-	search := search_info{}
+	search := SearchInfo{}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = line_selector_pipeline(subtest.keyword, subtest.text, search)
+		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
 		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",

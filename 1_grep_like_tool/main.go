@@ -3,12 +3,15 @@ package main
 import (
 	"bufio"
 	"fmt"
+	grep_colors "main/internal/colors"
+	grep_line_select "main/internal/line_select"
+	grep_parser "main/internal/parser"
 	"os"
 )
 
 func main() {
 
-	pattern, filenames, search := parse_args(os.Args[1:])
+	pattern, filenames, search := grep_parser.ParseArgs(os.Args[1:])
 
 	fmt.Print(go_through_files(pattern, filenames, search))
 }
@@ -16,7 +19,7 @@ func main() {
 func go_through_files(
 	keyword string,
 	files []string,
-	search search_info) string {
+	search grep_line_select.SearchInfo) string {
 
 	var output string
 	var print_filename bool
@@ -39,11 +42,11 @@ func go_through_files(
 			for scanner.Scan() {
 				line := scanner.Text()
 
-				line_output := get_output_line(keyword, line, search)
+				line_output := grep_line_select.GetOutputLine(keyword, line, search)
 
 				if len(line_output) != 0 {
 					if print_filename {
-						line_output = color_magenta(filename) + color_cyan(":") + line_output
+						line_output = grep_colors.Color_magenta(filename) + grep_colors.Color_cyan(":") + line_output
 					}
 					output += line_output + "\n"
 				}

@@ -1,39 +1,40 @@
-package main
+package grep_line_select
 
 import (
+	grep_colors "main/internal/colors"
 	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 )
 
-type search_info struct {
-	case_insensitive  bool
-	invert_matching   bool
-	match_granularity string // default (""), word, line
+type SearchInfo struct {
+	CaseInsensitive  bool
+	InvertMatching   bool
+	MatchGranularity string // default (""), word, line
 }
 
-func get_output_line(keyword string, line string, search search_info) string {
-	out_line, indexes_to_highlight := line_selector_pipeline(keyword, line, search)
-	return color_results(out_line, indexes_to_highlight)
+func GetOutputLine(keyword string, line string, search SearchInfo) string {
+	out_line, indexes_to_highlight := lineSelectorPipeline(keyword, line, search)
+	return colorResults(out_line, indexes_to_highlight)
 }
 
 // returns string : output line
 // returns [][2]int : indexes_to_highlight ([]byte indexes)
-func line_selector_pipeline(keyword string, line string, search search_info) (string, [][2]int) {
+func lineSelectorPipeline(keyword string, line string, search SearchInfo) (string, [][2]int) {
 
-	var indexes = get_matching_pattern_indexes(keyword, line)
+	var indexes = getMatchingPatternIndexes(keyword, line)
 
-	if !search.case_insensitive {
-		indexes = apply_case_sensitive_selection(keyword, line, indexes)
+	if !search.CaseInsensitive {
+		indexes = applyCaseSensitiveSelection(keyword, line, indexes)
 	}
 
-	indexes = apply_match_granularity(keyword, line, indexes, search.match_granularity)
+	indexes = applyMatchGranularity(keyword, line, indexes, search.MatchGranularity)
 
-	return apply_invert_matching(line, indexes, search.invert_matching)
+	return applyInvertMatching(line, indexes, search.InvertMatching)
 }
 
-func color_results(line string, indexes_to_highlight [][2]int) string {
+func colorResults(line string, indexes_to_highlight [][2]int) string {
 
 	if len(line) == 0 {
 		return ""
@@ -48,14 +49,14 @@ func color_results(line string, indexes_to_highlight [][2]int) string {
 
 	for _, substr := range indexes_to_highlight {
 		start, end := substr[0], substr[1]
-		line_output += line[prev_end:start] + color_red(line[start:end])
+		line_output += line[prev_end:start] + grep_colors.Color_red(line[start:end])
 		prev_end = end
 	}
 
 	return line_output + line[prev_end:]
 }
 
-func apply_invert_matching(
+func applyInvertMatching(
 	line string,
 	indexes [][2]int,
 	invert_matching bool) (string, [][2]int) {
@@ -77,7 +78,7 @@ func apply_invert_matching(
 	return output, indexes
 }
 
-func apply_match_granularity(keyword string,
+func applyMatchGranularity(keyword string,
 	line string,
 	indexes [][2]int,
 	match_type string) [][2]int {
@@ -136,10 +137,10 @@ func apply_match_granularity(keyword string,
 	return seq_match_indexes
 }
 
-func apply_case_sensitive_selection(keyword string, line string, indexes [][2]int) [][2]int {
+func applyCaseSensitiveSelection(keyword string, line string, indexes [][2]int) [][2]int {
 	case_sensitive_indexes := [][2]int{}
 
-	keyword_escape_removed := turn_bre_syntax_in_go_syntax(keyword)
+	keyword_escape_removed := turnBreSyntaxInGoSyntax(keyword)
 	re, _ := regexp.Compile(keyword_escape_removed)
 	// TODO err management
 
@@ -155,11 +156,11 @@ func apply_case_sensitive_selection(keyword string, line string, indexes [][2]in
 	return case_sensitive_indexes
 }
 
-func get_matching_pattern_indexes(keyword string, line string) [][2]int {
+func getMatchingPatternIndexes(keyword string, line string) [][2]int {
 	var indexes [][2]int
 	// TODO turn this into [][]int like in regexp package ??
 
-	keyword_escape_removed := turn_bre_syntax_in_go_syntax(keyword)
+	keyword_escape_removed := turnBreSyntaxInGoSyntax(keyword)
 
 	var lower_keyword = strings.ToLower(keyword_escape_removed)
 	var lower_line = strings.ToLower(line)
@@ -177,7 +178,7 @@ func get_matching_pattern_indexes(keyword string, line string) [][2]int {
 	return indexes
 }
 
-func turn_bre_syntax_in_go_syntax(keyword string) string {
+func turnBreSyntaxInGoSyntax(keyword string) string {
 
 	// replace \| \? \+ \( \) \{ \}
 	// by      |   ?  +  (  )  {  }

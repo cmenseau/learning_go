@@ -22,5 +22,5 @@ Known limitations :
 Run tests with
 ```
 cd src/main
-go test .
+go test ./...
 ``` 
