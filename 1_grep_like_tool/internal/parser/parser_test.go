@@ -2,6 +2,7 @@ package grep_parser
 
 import (
 	grep_line_select "main/internal/line_select"
+	grep_output_control "main/internal/output_control"
 	"slices"
 	"testing"
 )
@@ -12,6 +13,7 @@ func TestParser(test *testing.T) {
 		pattern   string
 		filenames []string
 		search    grep_line_select.SearchInfo
+		req       grep_output_control.OutputControlRequest
 	}{
 		{
 			args:      []string{"lo", "a.txt"},
@@ -60,19 +62,43 @@ func TestParser(test *testing.T) {
 			filenames: []string{"a.txt"},
 			search:    grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line", InvertMatching: true},
 		},
+		{
+			args:      []string{"lo", "-c", "a.txt"},
+			pattern:   "lo",
+			filenames: []string{"a.txt"},
+			req:       grep_output_control.OutputControlRequest{CountLines: true},
+		},
+		{
+			args:      []string{"lo", "-L", "a.txt"},
+			pattern:   "lo",
+			filenames: []string{"a.txt"},
+			req:       grep_output_control.OutputControlRequest{FilesWithoutMatch: true},
+		},
+		{
+			args:      []string{"lo", "-l", "a.txt"},
+			pattern:   "lo",
+			filenames: []string{"a.txt"},
+			req:       grep_output_control.OutputControlRequest{FilesWithMatch: true},
+		},
+		{
+			args:      []string{"lo", "-o", "a.txt"},
+			pattern:   "lo",
+			filenames: []string{"a.txt"},
+			req:       grep_output_control.OutputControlRequest{OnlyMatching: true},
+		},
 	}
 
 	for _, subtest := range subtests {
-		//TODO use last var
-		var pattern_out, filenames_out, search_out, _ = ParseArgs(subtest.args)
+		var pattern_out, filenames_out, search_out, req_out = ParseArgs(subtest.args)
 
 		if pattern_out != subtest.pattern ||
 			!slices.Equal(filenames_out, subtest.filenames) ||
-			search_out != subtest.search {
-			test.Errorf("for input \"%#v\"\nwanted: %#v, %#v, %#v\n   got: %#v, %#v, %#v",
+			search_out != subtest.search ||
+			req_out != subtest.req {
+			test.Errorf("for input \"%#v\"\nwanted: %#v, %#v, %#v, %#v\n   got: %#v, %#v, %#v, %#v",
 				subtest.args,
-				subtest.pattern, subtest.filenames, subtest.search,
-				pattern_out, filenames_out, search_out)
+				subtest.pattern, subtest.filenames, subtest.search, subtest.req,
+				pattern_out, filenames_out, search_out, req_out)
 		}
 	}
 }
