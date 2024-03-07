@@ -44,13 +44,13 @@ func TestSelectHightlight(test *testing.T) {
 	search := SearchInfo{}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
-		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				str_out, idx_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -96,13 +96,13 @@ func TestSelectHightlightInsensitive(test *testing.T) {
 	search := SearchInfo{CaseInsensitive: true}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
-		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				str_out, idx_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -139,13 +139,13 @@ func TestSelectReverse(test *testing.T) {
 	search := SearchInfo{InvertMatching: true}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
-		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				str_out, idx_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -182,13 +182,13 @@ func TestSelectWholeLine(test *testing.T) {
 	search := SearchInfo{MatchGranularity: "line"}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
-		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				str_out, idx_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -237,13 +237,13 @@ func TestSelectWords(test *testing.T) {
 	search := SearchInfo{MatchGranularity: "word"}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
-		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				str_out, idx_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -294,13 +294,13 @@ func TestSelectInsensitiveWords(test *testing.T) {
 	search.CaseInsensitive = true
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
-		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				str_out, idx_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -430,13 +430,13 @@ func TestSelectRegExpKeyword(test *testing.T) {
 	search := SearchInfo{}
 
 	for _, subtest := range subtests {
-		var str_out, idx_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
 
-		if str_out != subtest.exp_out || !slices.Equal(idx_out, subtest.col_out) {
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				str_out, idx_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }

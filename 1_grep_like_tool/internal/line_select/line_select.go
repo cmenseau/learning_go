@@ -14,14 +14,18 @@ type SearchInfo struct {
 	MatchGranularity string // default (""), word, line
 }
 
-func GetOutputLine(keyword string, line string, search SearchInfo) string {
-	out_line, indexes_to_highlight := lineSelectorPipeline(keyword, line, search)
-	return colorResults(out_line, indexes_to_highlight)
+// intermediate struct to store result line
+type highlightedLine struct {
+	line          string
+	keywordRanges [][2]int
 }
 
-// returns string : output line
-// returns [][2]int : indexes_to_highlight ([]byte indexes)
-func lineSelectorPipeline(keyword string, line string, search SearchInfo) (string, [][2]int) {
+func GetOutputLine(keyword string, line string, search SearchInfo) string {
+	out_line := lineSelectorPipeline(keyword, line, search)
+	return colorResults(out_line)
+}
+
+func lineSelectorPipeline(keyword string, line string, search SearchInfo) highlightedLine {
 
 	var indexes = getMatchingPatternIndexes(keyword, line)
 
@@ -31,51 +35,58 @@ func lineSelectorPipeline(keyword string, line string, search SearchInfo) (strin
 
 	indexes = applyMatchGranularity(keyword, line, indexes, search.MatchGranularity)
 
-	return applyInvertMatching(line, indexes, search.InvertMatching)
+	var output highlightedLine
+
+	if len(indexes) > 0 {
+		// at least 1 thing found : line should be displayed
+		output.line = line
+		output.keywordRanges = indexes
+	}
+
+	if search.InvertMatching {
+		output_line, indexes := applyInvertMatching(line, indexes)
+		output.line = output_line
+		output.keywordRanges = indexes
+	}
+
+	return output
+	// we need to return both line and indexes because line could
+	// be selected without any highlighted part (indexes={})
 }
 
-func colorResults(line string, indexes_to_highlight [][2]int) string {
+func colorResults(lineToHighlight highlightedLine) string {
 
-	if len(line) == 0 {
+	if len(lineToHighlight.line) == 0 {
 		return ""
 	}
-	if len(indexes_to_highlight) == 0 {
+	if len(lineToHighlight.keywordRanges) == 0 {
 		// returns full line for empty indexes (invert_matching case) without color
-		return line
+		return lineToHighlight.line
 	}
 
 	var line_output = ""
 	prev_end := 0
 
-	for _, substr := range indexes_to_highlight {
+	for _, substr := range lineToHighlight.keywordRanges {
 		start, end := substr[0], substr[1]
-		line_output += line[prev_end:start] + grep_colors.Color_red(line[start:end])
+		line_output += lineToHighlight.line[prev_end:start] + grep_colors.Color_red(lineToHighlight.line[start:end])
 		prev_end = end
 	}
 
-	return line_output + line[prev_end:]
+	return line_output + lineToHighlight.line[prev_end:]
 }
 
 func applyInvertMatching(
 	line string,
-	indexes [][2]int,
-	invert_matching bool) (string, [][2]int) {
+	indexes [][2]int) (string, [][2]int) {
 
+	// empty matches : line should be displayed, no highlight
+	// matches found : line should not be displayed (no highlight)
 	var output = ""
-	if invert_matching {
-		// empty matches : line should be displayed, no highlight
-		// matches found : line should not be displayed
-		if len(indexes) != 0 {
-			output = ""
-			indexes = [][2]int{}
-		} else {
-			output = line
-		}
-	} else if len(indexes) > 0 {
-		// at least 1 thing found : line should be displayed
+	if len(indexes) == 0 {
 		output = line
 	}
-	return output, indexes
+	return output, nil
 }
 
 func applyMatchGranularity(keyword string,
@@ -165,11 +176,9 @@ func getMatchingPatternIndexes(keyword string, line string) [][2]int {
 	var lower_keyword = strings.ToLower(keyword_escape_removed)
 	var lower_line = strings.ToLower(line)
 
-	curr_line := lower_line
-
 	re, err := regexp.Compile(lower_keyword)
 	if err == nil {
-		for _, idx_pair := range re.FindAllStringIndex(curr_line, -1) {
+		for _, idx_pair := range re.FindAllStringIndex(lower_line, -1) {
 			indexes = append(indexes, [2]int{idx_pair[0], idx_pair[1]})
 		}
 	} else {
