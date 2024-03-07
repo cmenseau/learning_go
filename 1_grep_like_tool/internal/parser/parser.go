@@ -3,13 +3,14 @@ package grep_parser
 import (
 	"fmt"
 	grep_line_select "main/internal/line_select"
+	grep_output_control "main/internal/output_control"
 	"os"
 	"slices"
 	"strings"
 )
 
 // parse args and returns (keyword string,	filenames []string,	search grep_line_select.SearchInfo)
-func ParseArgs(args []string) (pattern string, filenames []string, search grep_line_select.SearchInfo) {
+func ParseArgs(args []string) (pattern string, filenames []string, search grep_line_select.SearchInfo, req grep_output_control.OutputControlRequest) {
 
 	if len(args) < 2 {
 		fmt.Fprintf(os.Stderr, "Expecting more than 2 args, got %v\n", os.Args[1:])

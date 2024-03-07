@@ -63,7 +63,8 @@ func TestParser(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		var pattern_out, filenames_out, search_out = ParseArgs(subtest.args)
+		//TODO use last var
+		var pattern_out, filenames_out, search_out, _ = ParseArgs(subtest.args)
 
 		if pattern_out != subtest.pattern ||
 			!slices.Equal(filenames_out, subtest.filenames) ||
