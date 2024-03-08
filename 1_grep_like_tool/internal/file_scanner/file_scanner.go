@@ -7,9 +7,9 @@ import (
 )
 
 func GoThroughFiles(
-	keyword string,
 	files []string,
-	actionOnLine func(string, string) string) string {
+	actionOnLine func(string, string) string,
+	actionOnWholeFile func(string) string) string {
 
 	var output string
 
@@ -26,12 +26,11 @@ func GoThroughFiles(
 			for scanner.Scan() {
 				line := scanner.Text()
 
-				line_output := actionOnLine(line, filename)
-
-				output += line_output + "\n"
+				output += actionOnLine(line, filename)
 			}
 		}
 		file.Close()
+		output += actionOnWholeFile(filename)
 	}
 	return output
 }
