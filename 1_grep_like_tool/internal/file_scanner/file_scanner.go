@@ -15,6 +15,8 @@ func GoThroughFiles(
 
 	var output string
 	var print_filename bool
+
+	// TODO : remove (parser + prefix line control)
 	if len(files) > 1 {
 		print_filename = true
 	} else {

@@ -2,28 +2,28 @@ package grep_parser
 
 import (
 	"fmt"
+	grep_line_prefix_control "main/internal/grep_line_prefix_control"
 	grep_line_select "main/internal/line_select"
 	grep_output_control "main/internal/output_control"
-	grep_output_line_prefix_control "main/internal/output_line_prefix_control"
 	"os"
 	"slices"
 	"strings"
 )
 
 type GrepRequest struct {
-	Pattern       string
-	Filenames     []string
-	Search        grep_line_select.SearchInfo
-	OutputCtl     grep_output_control.OutputControlRequest
-	LinePrefixCtl grep_output_line_prefix_control.OutputLinePrefixControlRequest
+	Pattern    string
+	Filenames  []string
+	Search     grep_line_select.SearchInfo
+	FileOutput grep_output_control.FileOutputRequest
+	LinePrefix grep_line_prefix_control.LinePrefixRequest
 }
 
 func (req GrepRequest) Equal(req2 GrepRequest) bool {
 	return req.Pattern == req2.Pattern &&
-			slices.Equal(req.Filenames, req2.Filenames) &&
-			req.Search == req2.Search &&
-			req.OutputCtl == req2.OutputCtl &&
-			req.LinePrefixCtl == req2.LinePrefixCtl
+		slices.Equal(req.Filenames, req2.Filenames) &&
+		req.Search == req2.Search &&
+		req.FileOutput == req2.FileOutput &&
+		req.LinePrefix == req2.LinePrefix
 }
 
 // parse args and returns (keyword string,	filenames []string,	search grep_line_select.SearchInfo)

@@ -12,6 +12,7 @@ type SearchInfo struct {
 	CaseInsensitive  bool
 	InvertMatching   bool
 	MatchGranularity string // default (""), word, line
+	OnlyMatching     bool
 }
 
 // intermediate struct to store result line

@@ -1,9 +1,9 @@
 package grep_parser
 
 import (
+	grep_line_prefix_control "main/internal/grep_line_prefix_control"
 	grep_line_select "main/internal/line_select"
 	grep_output_control "main/internal/output_control"
-	grep_output_line_prefix_control "main/internal/output_line_prefix_control"
 	"testing"
 )
 
@@ -24,7 +24,7 @@ func TestParser(test *testing.T) {
 			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line"}}},
 		{
 			args: []string{"-w", "lo", "a.txt", "b.txt", "c.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt", "b.txt", "c.txt"}, Search: grep_line_select.SearchInfo{MatchGranularity: "word"}, LinePrefixCtl: grep_output_line_prefix_control.OutputLinePrefixControlRequest{WithFilename: true}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt", "b.txt", "c.txt"}, Search: grep_line_select.SearchInfo{MatchGranularity: "word"}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
 		{
 			args: []string{"-iwx", "lo", "a.txt"},
@@ -40,23 +40,23 @@ func TestParser(test *testing.T) {
 			req:  GrepRequest{Pattern: "whatever", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line", InvertMatching: true}}},
 		{
 			args: []string{"lo", "-c", "a.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, OutputCtl: grep_output_control.OutputControlRequest{CountLines: true}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, FileOutput: grep_output_control.FileOutputRequest{CountLines: true}},
 		},
 		{
 			args: []string{"lo", "-L", "a.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, OutputCtl: grep_output_control.OutputControlRequest{FilesWithoutMatch: true}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, FileOutput: grep_output_control.FileOutputRequest{FilesWithoutMatch: true}},
 		},
 		{
 			args: []string{"lo", "-l", "a.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, OutputCtl: grep_output_control.OutputControlRequest{FilesWithMatch: true}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, FileOutput: grep_output_control.FileOutputRequest{FilesWithMatch: true}},
 		},
 		{
 			args: []string{"lo", "-o", "a.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, OutputCtl: grep_output_control.OutputControlRequest{OnlyMatching: true}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{OnlyMatching: true}},
 		},
 		{
 			args: []string{"-H", "lo", "c.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"c.txt"}, LinePrefixCtl: grep_output_line_prefix_control.OutputLinePrefixControlRequest{WithFilename: true}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"c.txt"}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
 	}
 
