@@ -2,7 +2,7 @@ package grep_parser
 
 import (
 	"fmt"
-	grep_line_prefix_control "main/internal/grep_line_prefix_control"
+	grep_line_prefix_control "main/internal/line_prefix_control"
 	grep_line_select "main/internal/line_select"
 	grep_output_control "main/internal/output_control"
 	"os"
