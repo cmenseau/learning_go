@@ -1,56 +1,50 @@
 package grep_file_scanner
 
 import (
-	grep_line_select "main/internal/line_select"
 	"testing"
 )
 
 func TestFileScanner(test *testing.T) {
+	var aol = func(line string, filename string) string {
+		return line + ":" + filename
+	}
+
 	var subtests = []struct {
-		keyword  string
-		files    []string
-		search   grep_line_select.SearchInfo
-		line_out string
+		keyword      string
+		files        []string
+		actionOnLine func(line string, filename string) string
+		line_out     string
 	}{
 		{
-			keyword:  "good",
-			files:    []string{"./test_material/test1.txt", "./test_material/test2.txt"},
-			search:   grep_line_select.SearchInfo{},
-			line_out: "./test_material/test2.txt:good morning\n./test_material/test2.txt:good afternoon\n./test_material/test2.txt:good evening\n",
+			keyword:      "good",
+			files:        []string{"./test_material/test1.txt", "./test_material/test2.txt"},
+			actionOnLine: aol,
+			line_out: `a:./test_material/test1.txt
+b:./test_material/test1.txt
+c:./test_material/test1.txt
+hello:./test_material/test2.txt
+hi:./test_material/test2.txt
+good afternoon:./test_material/test2.txt
+`,
 		},
 		{
-			keyword:  "good",
-			files:    []string{"./test_material/test2.txt"},
-			search:   grep_line_select.SearchInfo{},
-			line_out: "good morning\ngood afternoon\ngood evening\n",
-		},
-		{
-			keyword:  "a",
-			files:    []string{"./test_material/test1.txt", "./test_material/test2.txt"},
-			search:   grep_line_select.SearchInfo{MatchGranularity: "word"},
-			line_out: "./test_material/test1.txt:a\n",
-		},
-		{
-			keyword:  "wwwww",
-			files:    []string{"./test_material/test1.txt", "./test_material/test2.txt"},
-			search:   grep_line_select.SearchInfo{},
-			line_out: "",
-		},
-		{
-			keyword:  "a",
-			files:    []string{"./test_material/test1.txt", "./test_material/test2.txt"},
-			search:   grep_line_select.SearchInfo{OnlyMatching: true},
-			line_out: "./test_material/test1.txt:a\n./test_material/test2.txt:a\n",
+			keyword:      "whatever",
+			files:        []string{"./test_material/test2.txt"},
+			actionOnLine: aol,
+			line_out: `hello:./test_material/test2.txt
+hi:./test_material/test2.txt
+good afternoon:./test_material/test2.txt
+`,
 		},
 	}
 
 	for _, subtest := range subtests {
-		var out = GoThroughFiles(subtest.keyword, subtest.files, subtest.search)
+		var out = GoThroughFiles(subtest.keyword, subtest.files, subtest.actionOnLine)
 
 		if out != subtest.line_out {
-			test.Errorf("wanted %#v (\"%v\" in : %v, %v), got %#v",
-				subtest.line_out, subtest.keyword,
-				subtest.files, subtest.search,
+			test.Errorf("wanted %#v (\"%v\" in : %v),\ngot %#v",
+				subtest.line_out,
+				subtest.keyword, subtest.files,
 				out)
 		}
 	}
