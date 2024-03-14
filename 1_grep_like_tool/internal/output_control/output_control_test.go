@@ -30,9 +30,10 @@ func TestSuppressNormalOutput(test *testing.T) {
 			exp_out: false,
 		},
 	}
-	ocs := FileOutputSelect{}
 
 	for _, subtest := range subtests {
+		ocs := FileOutputSelect{}
+		ocs.FileOutputReq = subtest.ocr
 		var out = ocs.SuppressNormalOutput()
 
 		if out != subtest.exp_out {
