@@ -12,7 +12,7 @@ import (
 
 type GrepRequest struct {
 	Pattern    string
-	Filenames  []string
+	filenames  []string
 	Search     grep_line_select.SearchInfo
 	FileOutput grep_output_control.FileOutputRequest
 	LinePrefix grep_line_prefix_control.LinePrefixRequest
@@ -20,14 +20,15 @@ type GrepRequest struct {
 
 func (req GrepRequest) Equal(req2 GrepRequest) bool {
 	return req.Pattern == req2.Pattern &&
-		slices.Equal(req.Filenames, req2.Filenames) &&
+		slices.Equal(req.filenames, req2.filenames) &&
 		req.Search == req2.Search &&
 		req.FileOutput == req2.FileOutput &&
 		req.LinePrefix == req2.LinePrefix
 }
 
-// parse args and returns (keyword string,	filenames []string,	search grep_line_select.SearchInfo)
-func ParseArgs(args []string) (req GrepRequest) {
+// parse args and returns GrepRequest
+func ParseArgs(args []string) (GrepRequest, []string) {
+	var req GrepRequest
 
 	if len(args) < 2 {
 		fmt.Fprintf(os.Stderr, "Expecting more than 2 args, got %v\n", os.Args[1:])
@@ -49,7 +50,11 @@ func ParseArgs(args []string) (req GrepRequest) {
 
 	req.Pattern = args[pattern_idx]
 
-	req.Filenames = args[pattern_idx+1:]
+	req.filenames = args[pattern_idx+1:]
+
+	if len(req.filenames) > 1 {
+		req.LinePrefix.WithFilename = true
+	}
 
 	if slices.Contains(options, "i") {
 		req.Search.CaseInsensitive = true
@@ -65,5 +70,5 @@ func ParseArgs(args []string) (req GrepRequest) {
 	if slices.Contains(options, "x") {
 		req.Search.MatchGranularity = "line"
 	}
-	return
+	return req, req.filenames
 }
