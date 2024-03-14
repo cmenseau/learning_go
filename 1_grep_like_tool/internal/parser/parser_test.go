@@ -39,7 +39,7 @@ func TestParser(test *testing.T) {
 			args: []string{"-ixv", "whatever", "a.txt"},
 			req:  GrepRequest{Pattern: "whatever", filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line", InvertMatching: true}}},
 		{
-			args: []string{"lo", "-c", "a.txt"},
+			args: []string{"lo", "-c", "a.txt"}, // also okay with pattern first
 			req:  GrepRequest{Pattern: "lo", filenames: []string{"a.txt"}, FileOutput: grep_output_control.FileOutputRequest{CountLines: true}},
 		},
 		{
@@ -57,6 +57,26 @@ func TestParser(test *testing.T) {
 		{
 			args: []string{"-H", "lo", "c.txt"},
 			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+		},
+		{
+			args: []string{"-Hi", "lo", "c.txt"},
+			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+		},
+		{
+			args: []string{"-H", "-i", "lo", "c.txt"},
+			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+		},
+		{
+			args: []string{"lo", "-Hi", "c.txt"},
+			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+		},
+		{
+			args: []string{"lo", "-H", "-i", "c.txt"},
+			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+		},
+		{
+			args: []string{"-H", "lo", "-i", "c.txt"},
+			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
 	}
 

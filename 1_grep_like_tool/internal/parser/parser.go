@@ -37,22 +37,33 @@ func ParseArgs(args []string) (GrepRequest, []string) {
 
 	var options []string
 	var pattern_idx int
+	var first_filename_idx int
+	var pattern_found bool
 
 	for i, val := range args {
 		if strings.HasPrefix(val, "-") {
 			var chars = strings.Split(strings.Replace(val, "-", "", -1), "")
 			options = append(options, chars...)
 		} else {
-			pattern_idx = i
-			break
+			// not an option : either the pattern if it wasn't yet found,
+			// otherwise the first filepath
+			if !pattern_found {
+				pattern_idx = i
+				pattern_found = true
+			} else {
+				first_filename_idx = i
+				break
+			}
 		}
 	}
 
+	// TODO : handle error when no pattern found
+
 	req.Pattern = args[pattern_idx]
 
-	req.filenames = args[pattern_idx+1:]
+	req.filenames = args[first_filename_idx:]
 
-	if len(req.filenames) > 1 {
+	if len(req.filenames) > 1 || slices.Contains(options, "H") {
 		req.LinePrefix.WithFilename = true
 	}
 
@@ -62,6 +73,9 @@ func ParseArgs(args []string) (GrepRequest, []string) {
 	if slices.Contains(options, "v") {
 		req.Search.InvertMatching = true
 	}
+	if slices.Contains(options, "o") {
+		req.Search.OnlyMatching = true
+	}
 
 	// if -x and -w specified, -x takes over
 	if slices.Contains(options, "w") {
@@ -70,5 +84,16 @@ func ParseArgs(args []string) (GrepRequest, []string) {
 	if slices.Contains(options, "x") {
 		req.Search.MatchGranularity = "line"
 	}
+
+	if slices.Contains(options, "c") {
+		req.FileOutput.CountLines = true
+	}
+	if slices.Contains(options, "l") {
+		req.FileOutput.FilesWithMatch = true
+	}
+	if slices.Contains(options, "L") {
+		req.FileOutput.FilesWithoutMatch = true
+	}
+
 	return req, req.filenames
 }
