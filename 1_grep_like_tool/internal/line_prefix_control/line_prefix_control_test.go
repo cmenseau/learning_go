@@ -16,7 +16,7 @@ func TestGetPrefix(test *testing.T) {
 		{
 			filename: "whatever.txt",
 			lpr:      LinePrefixRequest{WithFilename: true},
-			exp_out:  "whatever.txt",
+			exp_out:  "whatever.txt:",
 		},
 		{
 			filename: "whatever.txt",
