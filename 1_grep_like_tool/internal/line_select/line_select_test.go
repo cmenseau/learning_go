@@ -319,12 +319,6 @@ func TestSelectRegExpKeyword(test *testing.T) {
 			col_out: [][2]int{{0, 1}, {3, 4}},
 		},
 		{
-			keyword: `|`,
-			text:    "loutre",
-			exp_out: "",
-			col_out: [][2]int{},
-		},
-		{
 			keyword: `a\(b\|c\)d`,
 			text:    "a abd acd abc",
 			exp_out: "a abd acd abc",
@@ -420,11 +414,40 @@ func TestSelectRegExpKeyword(test *testing.T) {
 			exp_out: `saucisses`,
 			col_out: [][2]int{{8, 9}},
 		},
+	}
+	search := SearchInfo{}
+
+	for _, subtest := range subtests {
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
+				subtest.exp_out, subtest.col_out,
+				subtest.keyword, subtest.text,
+				out.line, out.keywordRanges)
+		}
+	}
+}
+
+// TODO update README.md
+func TestRegExpNotSupported(test *testing.T) {
+	var subtests = []struct {
+		keyword string
+		text    string
+		exp_out string
+		col_out [][2]int
+	}{
 		{
 			keyword: `\<au\>`,
 			text:    `saucisse au poulet`,
 			exp_out: `saucisse au poulet`,
 			col_out: [][2]int{{8, 9}},
+		},
+		{
+			keyword: `|`,
+			text:    "loutre",
+			exp_out: "",
+			col_out: [][2]int{},
 		},
 	}
 	search := SearchInfo{}
