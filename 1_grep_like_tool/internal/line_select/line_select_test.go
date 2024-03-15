@@ -491,13 +491,13 @@ func TestSelectOnlyMatching(test *testing.T) {
 		{
 			keyword: "a",
 			text:    "canapé",
-			exp_out: "a\na\n",
+			exp_out: "a\na",
 			col_out: [][2]int{{0, 1}, {2, 3}},
 		},
 		{
 			keyword: "abc",
 			text:    "ABCabcABCabcABCàbç",
-			exp_out: "abc\nabc\n",
+			exp_out: "abc\nabc",
 			col_out: [][2]int{{0, 3}, {4, 7}},
 		},
 		{
