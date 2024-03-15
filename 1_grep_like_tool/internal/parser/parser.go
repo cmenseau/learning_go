@@ -22,7 +22,7 @@ func (req GrepRequest) Equal(req2 GrepRequest) bool {
 	return req.Pattern == req2.Pattern &&
 		slices.Equal(req.filenames, req2.filenames) &&
 		req.Search == req2.Search &&
-		req.FileOutput == req2.FileOutput &&
+		req.FileOutput.Equal(req2.FileOutput) &&
 		req.LinePrefix == req2.LinePrefix
 }
 

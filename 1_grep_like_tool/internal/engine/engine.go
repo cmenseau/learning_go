@@ -4,7 +4,6 @@ import (
 	grep_parser "main/internal/parser"
 
 	grep_line_select "main/internal/line_select"
-	grep_output_control "main/internal/output_control"
 )
 
 type Engine struct {
@@ -25,11 +24,7 @@ func (e Engine) OutputOnLine(line string, filename string) string {
 
 func (e Engine) OutputOnWholeFile(filename string) string {
 
-	var fileOutput = grep_output_control.FileOutputSelect{
-		FileOutputReq: e.Request.FileOutput,
-	}
-
-	line_output := fileOutput.GetFinalOutputControl(filename)
+	line_output := e.Request.FileOutput.GetFinalOutputControl(filename)
 
 	if len(line_output) > 0 {
 		prefix := e.Request.LinePrefix.GetPrefix(filename)
