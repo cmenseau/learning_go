@@ -50,6 +50,12 @@ func lineSelectorPipeline(keyword string, line string, search SearchInfo) highli
 		output.keywordRanges = indexes
 	}
 
+	if search.OnlyMatching {
+		output_line, indexes := applyOnlyMatching(line, indexes)
+		output.line = output_line
+		output.keywordRanges = indexes
+	}
+
 	return output
 	// we need to return both line and indexes because line could
 	// be selected without any highlighted part (indexes={})
@@ -88,6 +94,28 @@ func applyInvertMatching(
 		output = line
 	}
 	return output, nil
+}
+
+func applyOnlyMatching(
+	line string,
+	indexes_to_highlight [][2]int) (string, [][2]int) {
+
+	// remove everything that's not highlighted
+	var output = ""
+	var new_indexes [][2]int
+
+	for idx, substr := range indexes_to_highlight {
+		line_idx := len(output)
+		output += line[substr[0]:substr[1]]
+
+		if idx != len(indexes_to_highlight)-1 {
+			output += "\n"
+		}
+		new_indexes = append(new_indexes,
+			[2]int{line_idx, line_idx + substr[1] - substr[0]})
+	}
+
+	return output, new_indexes
 }
 
 func applyMatchGranularity(keyword string,
