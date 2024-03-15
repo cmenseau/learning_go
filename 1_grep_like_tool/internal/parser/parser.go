@@ -90,9 +90,11 @@ func ParseArgs(args []string) (GrepRequest, []string) {
 	}
 	if slices.Contains(options, "l") {
 		req.FileOutput.FilesWithMatch = true
+		req.LinePrefix.WithFilename = false
 	}
 	if slices.Contains(options, "L") {
 		req.FileOutput.FilesWithoutMatch = true
+		req.LinePrefix.WithFilename = false
 	}
 
 	return req, req.filenames
