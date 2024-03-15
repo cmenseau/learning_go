@@ -78,6 +78,14 @@ func TestParser(test *testing.T) {
 			args: []string{"-H", "lo", "-i", "c.txt"},
 			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
+		{
+			args: []string{"-lH", "lo", "c.txt"},
+			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: false}},
+		},
+		{
+			args: []string{"-LH", "lo", "c.txt"},
+			req:  GrepRequest{Pattern: "lo", filenames: []string{"c.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: false}},
+		},
 	}
 
 	for _, subtest := range subtests {

@@ -208,12 +208,19 @@ func TestEngineLine(test *testing.T) {
 }
 
 func TestEngineWholeFile(test *testing.T) {
+	type lines struct {
+		line     string
+		filename string
+	}
+
 	subtests := []struct {
 		request  grep_parser.GrepRequest
+		content  []lines
 		filename string
 		line_out string
 	}{
 		{
+			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
@@ -224,6 +231,7 @@ func TestEngineWholeFile(test *testing.T) {
 			line_out: "",
 		},
 		{
+			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{CaseInsensitive: true},
@@ -234,6 +242,7 @@ func TestEngineWholeFile(test *testing.T) {
 			line_out: "",
 		},
 		{
+			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{InvertMatching: true},
@@ -244,6 +253,7 @@ func TestEngineWholeFile(test *testing.T) {
 			line_out: "",
 		},
 		{
+			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{MatchGranularity: ""},
@@ -254,6 +264,7 @@ func TestEngineWholeFile(test *testing.T) {
 			line_out: "",
 		},
 		{
+			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{MatchGranularity: "word"},
@@ -264,6 +275,7 @@ func TestEngineWholeFile(test *testing.T) {
 			line_out: "",
 		},
 		{
+			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{MatchGranularity: "line"},
@@ -274,6 +286,7 @@ func TestEngineWholeFile(test *testing.T) {
 			line_out: "",
 		},
 		{
+			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
@@ -284,24 +297,84 @@ func TestEngineWholeFile(test *testing.T) {
 			line_out: "",
 		},
 		{
+			content: []lines{
+				{
+					line:     "abc",
+					filename: "1.txt",
+				},
+			},
+			request: grep_parser.GrepRequest{
+				Pattern:    "abc",
+				Search:     grep_line_select.SearchInfo{},
+				FileOutput: grep_output_control.FileOutputRequest{CountLines: true},
+				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
+			},
+			filename: "1.txt",
+			line_out: "1.txt:1\n",
+		},
+		{
+			content: []lines{
+				{
+					line:     "abc",
+					filename: "1.txt",
+				},
+			},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithoutMatch: true},
-				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
+				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
 			},
 			filename: "1.txt",
-			line_out: "1.txt",
+			line_out: "",
 		},
 		{
+			content: []lines{
+				{
+					line:     "def",
+					filename: "1.txt",
+				},
+			},
+			request: grep_parser.GrepRequest{
+				Pattern:    "abc",
+				Search:     grep_line_select.SearchInfo{},
+				FileOutput: grep_output_control.FileOutputRequest{FilesWithoutMatch: true},
+				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
+			},
+			filename: "1.txt",
+			line_out: "1.txt\n",
+		},
+		{
+			content: []lines{
+				{
+					line:     "abc",
+					filename: "whatever.txt",
+				},
+			},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithMatch: true},
-				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
+				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
 			},
 			filename: "whatever.txt",
-			line_out: "whatever.txt",
+			line_out: "whatever.txt\n",
+		},
+		{
+			content: []lines{
+				{
+					line:     "def",
+					filename: "whatever.txt",
+				},
+			},
+			request: grep_parser.GrepRequest{
+				Pattern:    "abc",
+				Search:     grep_line_select.SearchInfo{},
+				FileOutput: grep_output_control.FileOutputRequest{FilesWithMatch: true},
+				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
+			},
+			filename: "whatever.txt",
+			line_out: "",
 		},
 		{
 			request: grep_parser.GrepRequest{
@@ -317,6 +390,10 @@ func TestEngineWholeFile(test *testing.T) {
 
 	for _, subtest := range subtests {
 		engine := Engine{&subtest.request}
+
+		for _, content := range subtest.content {
+			engine.OutputOnLine(content.line, content.filename)
+		}
 
 		var out = engine.OutputOnWholeFile(subtest.filename)
 
