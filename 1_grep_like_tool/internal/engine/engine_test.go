@@ -172,7 +172,7 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{CaseInsensitive: true, OnlyMatching: true, MatchGranularity: "w"},
+				Search:     grep_line_select.SearchInfo{CaseInsensitive: true, OnlyMatching: true, MatchGranularity: "word"},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
 			},
