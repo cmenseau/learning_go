@@ -463,3 +463,60 @@ func TestRegExpNotSupported(test *testing.T) {
 		}
 	}
 }
+
+func TestSelectOnlyMatching(test *testing.T) {
+	var subtests = []struct {
+		keyword string
+		text    string
+		exp_out string
+		col_out [][2]int
+	}{
+		{
+			keyword: "lo",
+			text:    "loutre",
+			exp_out: "lo",
+			col_out: [][2]int{{0, 2}},
+		},
+		{
+			keyword: "Loutre",
+			text:    "Loutre",
+			exp_out: "Loutre",
+			col_out: [][2]int{{0, 6}},
+		},
+		{
+			keyword: "Canapé",
+			text:    "canapé",
+			exp_out: "",
+		},
+		{
+			keyword: "a",
+			text:    "canapé",
+			exp_out: "a\na\n",
+			col_out: [][2]int{{0, 1}, {2, 3}},
+		},
+		{
+			keyword: "abc",
+			text:    "ABCabcABCabcABCàbç",
+			exp_out: "abc\nabc\n",
+			col_out: [][2]int{{0, 3}, {4, 7}},
+		},
+		{
+			keyword: "abc",
+			text:    "loutre",
+			exp_out: "",
+		},
+	}
+
+	search := SearchInfo{OnlyMatching: true}
+
+	for _, subtest := range subtests {
+		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
+				subtest.exp_out, subtest.col_out,
+				subtest.keyword, subtest.text,
+				out.line, out.keywordRanges)
+		}
+	}
+}
