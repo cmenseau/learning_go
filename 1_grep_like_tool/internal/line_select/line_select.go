@@ -198,7 +198,6 @@ func applyCaseSensitiveSelection(keyword string, line string, indexes [][2]int) 
 
 func getMatchingPatternIndexes(keyword string, line string) [][2]int {
 	var indexes [][2]int
-	// TODO turn this into [][]int like in regexp package ??
 
 	keyword_escape_removed := turnBreSyntaxInGoSyntax(keyword)
 
@@ -211,7 +210,7 @@ func getMatchingPatternIndexes(keyword string, line string) [][2]int {
 			indexes = append(indexes, [2]int{idx_pair[0], idx_pair[1]})
 		}
 	} else {
-		// TODO
+		// TODO err management
 	}
 	return indexes
 }

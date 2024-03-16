@@ -26,9 +26,6 @@ func (fos FileOutputRequest) SuppressNormalOutput() bool {
 func (fos *FileOutputRequest) ProcessOutputLine(line string, filename string) {
 	// store count or what's required to be able to print final output by file
 
-	// order of the IF matters,
-	// grep supports 1 option at a time in this order
-	// TODO : enforce this logic in parser rather than here ?
 	if fos.FilesWithoutMatch {
 		if fos.filesWithoutMatchMap == nil {
 			fos.filesWithoutMatchMap = make(map[string]bool)
@@ -36,14 +33,16 @@ func (fos *FileOutputRequest) ProcessOutputLine(line string, filename string) {
 		if line == "" {
 			fos.filesWithoutMatchMap[filename] = true
 		}
-	} else if fos.FilesWithMatch {
+	}
+	if fos.FilesWithMatch {
 		if fos.filesWithMatchMap == nil {
 			fos.filesWithMatchMap = make(map[string]bool)
 		}
 		if line != "" {
 			fos.filesWithMatchMap[filename] = true
 		}
-	} else if fos.CountLines {
+	}
+	if fos.CountLines {
 		if fos.countMatchingLinesMap == nil {
 			fos.countMatchingLinesMap = make(map[string]int)
 		}

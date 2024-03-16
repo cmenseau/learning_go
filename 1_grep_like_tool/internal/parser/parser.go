@@ -10,9 +10,10 @@ import (
 	"strings"
 )
 
+// TODO : move this into engine ?
 type GrepRequest struct {
 	Pattern    string
-	filenames  []string
+	Filenames  []string
 	Search     grep_line_select.SearchInfo
 	FileOutput grep_output_control.FileOutputRequest
 	LinePrefix grep_line_prefix_control.LinePrefixRequest
@@ -20,14 +21,14 @@ type GrepRequest struct {
 
 func (req GrepRequest) Equal(req2 GrepRequest) bool {
 	return req.Pattern == req2.Pattern &&
-		slices.Equal(req.filenames, req2.filenames) &&
+		slices.Equal(req.Filenames, req2.Filenames) &&
 		req.Search == req2.Search &&
 		req.FileOutput.Equal(req2.FileOutput) &&
 		req.LinePrefix == req2.LinePrefix
 }
 
 // parse args and returns GrepRequest
-func ParseArgs(args []string) (GrepRequest, []string) {
+func ParseArgs(args []string) GrepRequest {
 	var req GrepRequest
 
 	if len(args) < 2 {
@@ -61,9 +62,9 @@ func ParseArgs(args []string) (GrepRequest, []string) {
 
 	req.Pattern = args[pattern_idx]
 
-	req.filenames = args[first_filename_idx:]
+	req.Filenames = args[first_filename_idx:]
 
-	if len(req.filenames) > 1 || slices.Contains(options, "H") {
+	if len(req.Filenames) > 1 || slices.Contains(options, "H") {
 		req.LinePrefix.WithFilename = true
 	}
 
@@ -85,17 +86,17 @@ func ParseArgs(args []string) (GrepRequest, []string) {
 		req.Search.MatchGranularity = "line"
 	}
 
-	if slices.Contains(options, "c") {
-		req.FileOutput.CountLines = true
-	}
-	if slices.Contains(options, "l") {
-		req.FileOutput.FilesWithMatch = true
-		req.LinePrefix.WithFilename = false
-	}
+	// only one the the 3 option can be used,
+	// with priority filesWithout over filesWith over CountLines
 	if slices.Contains(options, "L") {
 		req.FileOutput.FilesWithoutMatch = true
 		req.LinePrefix.WithFilename = false
+	} else if slices.Contains(options, "l") {
+		req.FileOutput.FilesWithMatch = true
+		req.LinePrefix.WithFilename = false
+	} else if slices.Contains(options, "c") {
+		req.FileOutput.CountLines = true
 	}
 
-	return req, req.filenames
+	return req
 }
