@@ -294,7 +294,7 @@ func TestEngineWholeFile(test *testing.T) {
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
 			filename: "1.txt",
-			line_out: "",
+			line_out: "0\n",
 		},
 		{
 			content: []lines{
@@ -339,7 +339,7 @@ func TestEngineWholeFile(test *testing.T) {
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithoutMatch: true},
-				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
+				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "1.txt\n",
@@ -355,7 +355,7 @@ func TestEngineWholeFile(test *testing.T) {
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithMatch: true},
-				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
+				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
 			filename: "whatever.txt",
 			line_out: "whatever.txt\n",

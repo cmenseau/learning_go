@@ -14,6 +14,11 @@ func (e Engine) OutputOnLine(line string, filename string) string {
 
 	line_output := grep_line_select.GetOutputLine(e.Request.Pattern, line, e.Request.Search)
 
+	if e.Request.FileOutput.SuppressNormalOutput() {
+		e.Request.FileOutput.ProcessOutputLine(line_output, filename)
+		line_output = ""
+	}
+
 	if len(line_output) != 0 {
 		prefix := e.Request.LinePrefix.GetPrefix(filename)
 
