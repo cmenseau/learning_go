@@ -63,10 +63,8 @@ func (fos *FileOutputRequest) GetFinalOutputControl(filename string) string {
 			return filename
 		}
 	} else if fos.CountLines {
-		line_count, ok := fos.countMatchingLinesMap[filename]
-		if ok {
-			return fmt.Sprintf("%d", line_count)
-		}
+		line_count := fos.countMatchingLinesMap[filename]
+		return fmt.Sprintf("%d", line_count)
 	}
 	return ""
 }
