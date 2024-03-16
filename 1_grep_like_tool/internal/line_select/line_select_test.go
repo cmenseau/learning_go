@@ -429,7 +429,6 @@ func TestSelectRegExpKeyword(test *testing.T) {
 	}
 }
 
-// TODO update README.md
 func TestRegExpNotSupported(test *testing.T) {
 	var subtests = []struct {
 		keyword string
