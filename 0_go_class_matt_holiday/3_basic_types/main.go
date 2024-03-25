@@ -52,4 +52,8 @@ func main() {
 	const m bool = true
 	// m = false           // UnassignableOperand
 	fmt.Printf("%v %[1]T\n", m)
+
+	// won't compile : cannot have const not init
+	// const n bool
+	// fmt.Println(n)
 }
