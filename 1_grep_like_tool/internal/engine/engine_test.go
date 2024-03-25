@@ -62,7 +62,7 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{MatchGranularity: "w"},
+				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
@@ -73,7 +73,7 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{MatchGranularity: "word"},
+				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
@@ -84,7 +84,7 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{MatchGranularity: "line"},
+				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.LineGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
@@ -95,7 +95,7 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{MatchGranularity: "line"},
+				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.LineGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
@@ -172,7 +172,7 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{CaseInsensitive: true, OnlyMatching: true, MatchGranularity: "word"},
+				Search:     grep_line_select.SearchInfo{CaseInsensitive: true, OnlyMatching: true, Granularity: grep_line_select.WordGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true},
 			},
@@ -256,7 +256,7 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{MatchGranularity: ""},
+				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.AllGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
@@ -267,7 +267,7 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{MatchGranularity: "word"},
+				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},
@@ -278,7 +278,7 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: grep_parser.GrepRequest{
 				Pattern:    "abc",
-				Search:     grep_line_select.SearchInfo{MatchGranularity: "line"},
+				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.LineGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
 				LinePrefix: grep_line_prefix_control.LinePrefixRequest{},
 			},

@@ -21,23 +21,23 @@ func TestParser(test *testing.T) {
 			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true}}},
 		{
 			args: []string{"-ix", "lo", "a.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line"}}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, Granularity: grep_line_select.LineGranularity}}},
 		{
 			args: []string{"-w", "lo", "a.txt", "b.txt", "c.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt", "b.txt", "c.txt"}, Search: grep_line_select.SearchInfo{MatchGranularity: "word"}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt", "b.txt", "c.txt"}, Search: grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
 		{
 			args: []string{"-iwx", "lo", "a.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line"}}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, Granularity: grep_line_select.LineGranularity}}},
 		{
 			args: []string{"-ixw", "lo", "a.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line"}}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, Granularity: grep_line_select.LineGranularity}}},
 		{
 			args: []string{"-wv", "lo", "a.txt"},
-			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{InvertMatching: true, MatchGranularity: "word"}}},
+			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{InvertMatching: true, Granularity: grep_line_select.WordGranularity}}},
 		{
 			args: []string{"-ixv", "whatever", "a.txt"},
-			req:  GrepRequest{Pattern: "whatever", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, MatchGranularity: "line", InvertMatching: true}}},
+			req:  GrepRequest{Pattern: "whatever", Filenames: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, Granularity: grep_line_select.LineGranularity, InvertMatching: true}}},
 		{
 			args: []string{"lo", "-c", "a.txt"}, // also okay with pattern first
 			req:  GrepRequest{Pattern: "lo", Filenames: []string{"a.txt"}, FileOutput: grep_output_control.FileOutputRequest{CountLines: true}},

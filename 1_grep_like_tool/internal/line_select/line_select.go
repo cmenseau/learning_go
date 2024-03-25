@@ -8,11 +8,19 @@ import (
 	"unicode/utf8"
 )
 
+type matchGranularity int
+
+const (
+	AllGranularity matchGranularity = iota
+	WordGranularity
+	LineGranularity
+)
+
 type SearchInfo struct {
-	CaseInsensitive  bool
-	InvertMatching   bool
-	MatchGranularity string // default (""), word, line
-	OnlyMatching     bool
+	CaseInsensitive bool
+	InvertMatching  bool
+	Granularity     matchGranularity
+	OnlyMatching    bool
 }
 
 // intermediate struct to store result line
@@ -34,7 +42,7 @@ func lineSelectorPipeline(keyword string, line string, search SearchInfo) highli
 		indexes = applyCaseSensitiveSelection(keyword, line, indexes)
 	}
 
-	indexes = applyMatchGranularity(keyword, line, indexes, search.MatchGranularity)
+	indexes = applyMatchGranularity(keyword, line, indexes, search.Granularity)
 
 	var output highlightedLine
 
@@ -121,7 +129,7 @@ func applyOnlyMatching(
 func applyMatchGranularity(keyword string,
 	line string,
 	indexes [][2]int,
-	match_type string) [][2]int {
+	match_type matchGranularity) [][2]int {
 
 	seq_match_indexes := [][2]int{}
 
@@ -130,9 +138,9 @@ func applyMatchGranularity(keyword string,
 	}
 
 	switch match_type {
-	case "":
+	case AllGranularity:
 		seq_match_indexes = indexes
-	case "line":
+	case LineGranularity:
 		// indexes : [0]
 
 		// if keyword is found more than 1 time, it can't be the full line
@@ -140,7 +148,7 @@ func applyMatchGranularity(keyword string,
 		if len(indexes) == 1 && indexes[0][0] == 0 && strings.EqualFold(line, keyword) {
 			seq_match_indexes = append(seq_match_indexes, indexes...)
 		}
-	case "word":
+	case WordGranularity:
 
 		for _, idx := range indexes {
 			start := idx[0]

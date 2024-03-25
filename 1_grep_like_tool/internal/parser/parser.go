@@ -80,10 +80,10 @@ func ParseArgs(args []string) GrepRequest {
 
 	// if -x and -w specified, -x takes over
 	if slices.Contains(options, "w") {
-		req.Search.MatchGranularity = "word"
+		req.Search.Granularity = grep_line_select.WordGranularity
 	}
 	if slices.Contains(options, "x") {
-		req.Search.MatchGranularity = "line"
+		req.Search.Granularity = grep_line_select.LineGranularity
 	}
 
 	// only one the the 3 option can be used,

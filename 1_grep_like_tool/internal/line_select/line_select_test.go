@@ -179,7 +179,7 @@ func TestSelectWholeLine(test *testing.T) {
 			exp_out: "",
 		},
 	}
-	search := SearchInfo{MatchGranularity: "line"}
+	search := SearchInfo{Granularity: LineGranularity}
 
 	for _, subtest := range subtests {
 		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
@@ -234,7 +234,7 @@ func TestSelectWords(test *testing.T) {
 			col_out: [][2]int{{21, 27}},
 		},
 	}
-	search := SearchInfo{MatchGranularity: "word"}
+	search := SearchInfo{Granularity: WordGranularity}
 
 	for _, subtest := range subtests {
 		var out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
@@ -290,7 +290,7 @@ func TestSelectInsensitiveWords(test *testing.T) {
 			col_out: [][2]int{{21, 27}},
 		},
 	}
-	search := SearchInfo{MatchGranularity: "word"}
+	search := SearchInfo{Granularity: WordGranularity}
 	search.CaseInsensitive = true
 
 	for _, subtest := range subtests {
