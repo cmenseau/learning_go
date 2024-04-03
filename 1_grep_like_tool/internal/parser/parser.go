@@ -2,34 +2,16 @@ package grep_parser
 
 import (
 	"fmt"
-	grep_line_prefix_control "main/internal/line_prefix_control"
+	grep_engine "main/internal/engine"
 	grep_line_select "main/internal/line_select"
-	grep_output_control "main/internal/output_control"
 	"os"
 	"slices"
 	"strings"
 )
 
-// TODO : move this into engine ?
-type GrepRequest struct {
-	Pattern    string
-	Filenames  []string
-	Search     grep_line_select.SearchInfo
-	FileOutput grep_output_control.FileOutputRequest
-	LinePrefix grep_line_prefix_control.LinePrefixRequest
-}
-
-func (req GrepRequest) Equal(req2 GrepRequest) bool {
-	return req.Pattern == req2.Pattern &&
-		slices.Equal(req.Filenames, req2.Filenames) &&
-		req.Search == req2.Search &&
-		req.FileOutput.Equal(req2.FileOutput) &&
-		req.LinePrefix == req2.LinePrefix
-}
-
 // parse args and returns GrepRequest
-func ParseArgs(args []string) GrepRequest {
-	var req GrepRequest
+func ParseArgs(args []string) grep_engine.Request {
+	var req grep_engine.Request
 
 	if len(args) < 2 {
 		fmt.Fprintf(os.Stderr, "Expecting more than 2 args, got %v\n", os.Args[1:])

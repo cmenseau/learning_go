@@ -4,19 +4,18 @@ import (
 	grep_line_prefix_control "main/internal/line_prefix_control"
 	grep_line_select "main/internal/line_select"
 	grep_output_control "main/internal/output_control"
-	grep_parser "main/internal/parser"
 	"testing"
 )
 
 func TestEngineLine(test *testing.T) {
 	subtests := []struct {
-		request  grep_parser.GrepRequest
+		request  Request
 		line     string
 		filename string
 		line_out string
 	}{
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -27,7 +26,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "abcdef\n",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -38,7 +37,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{CaseInsensitive: true},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -49,7 +48,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "aBcdef\n",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{InvertMatching: true},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -60,7 +59,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "def\n",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -71,7 +70,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -82,7 +81,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "abc def\n",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.LineGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -93,7 +92,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.LineGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -104,7 +103,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "abc\n",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{OnlyMatching: true},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -115,7 +114,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "abc\n",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{OnlyMatching: true},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -126,7 +125,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{CountLines: true},
@@ -137,7 +136,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithoutMatch: true},
@@ -148,7 +147,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithMatch: true},
@@ -159,7 +158,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -170,7 +169,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "2.txt:abcdef\n",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{CaseInsensitive: true, OnlyMatching: true, Granularity: grep_line_select.WordGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -181,7 +180,7 @@ func TestEngineLine(test *testing.T) {
 			line_out: "file.txt:aBc\n",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{OnlyMatching: true},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -214,14 +213,14 @@ func TestEngineWholeFile(test *testing.T) {
 	}
 
 	subtests := []struct {
-		request  grep_parser.GrepRequest
+		request  Request
 		content  []lines
 		filename string
 		line_out string
 	}{
 		{
 			content: []lines{},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -232,7 +231,7 @@ func TestEngineWholeFile(test *testing.T) {
 		},
 		{
 			content: []lines{},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{CaseInsensitive: true},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -243,7 +242,7 @@ func TestEngineWholeFile(test *testing.T) {
 		},
 		{
 			content: []lines{},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{InvertMatching: true},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -254,7 +253,7 @@ func TestEngineWholeFile(test *testing.T) {
 		},
 		{
 			content: []lines{},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.AllGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -265,7 +264,7 @@ func TestEngineWholeFile(test *testing.T) {
 		},
 		{
 			content: []lines{},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -276,7 +275,7 @@ func TestEngineWholeFile(test *testing.T) {
 		},
 		{
 			content: []lines{},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{Granularity: grep_line_select.LineGranularity},
 				FileOutput: grep_output_control.FileOutputRequest{},
@@ -287,7 +286,7 @@ func TestEngineWholeFile(test *testing.T) {
 		},
 		{
 			content: []lines{},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{CountLines: true},
@@ -303,7 +302,7 @@ func TestEngineWholeFile(test *testing.T) {
 					filename: "1.txt",
 				},
 			},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{CountLines: true},
@@ -319,7 +318,7 @@ func TestEngineWholeFile(test *testing.T) {
 					filename: "1.txt",
 				},
 			},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithoutMatch: true},
@@ -335,7 +334,7 @@ func TestEngineWholeFile(test *testing.T) {
 					filename: "1.txt",
 				},
 			},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithoutMatch: true},
@@ -351,7 +350,7 @@ func TestEngineWholeFile(test *testing.T) {
 					filename: "whatever.txt",
 				},
 			},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithMatch: true},
@@ -367,7 +366,7 @@ func TestEngineWholeFile(test *testing.T) {
 					filename: "whatever.txt",
 				},
 			},
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{FilesWithMatch: true},
@@ -377,7 +376,7 @@ func TestEngineWholeFile(test *testing.T) {
 			line_out: "",
 		},
 		{
-			request: grep_parser.GrepRequest{
+			request: Request{
 				Pattern:    "abc",
 				Search:     grep_line_select.SearchInfo{},
 				FileOutput: grep_output_control.FileOutputRequest{},
