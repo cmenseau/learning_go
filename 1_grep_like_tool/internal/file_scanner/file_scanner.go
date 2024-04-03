@@ -6,14 +6,21 @@ import (
 	"os"
 )
 
-func GoThroughFiles(
-	files []string,
-	actionOnLine func(string, string) string,
-	actionOnWholeFile func(string) string) string {
+type Finder interface {
+	OutputOnLine(line string, filename string) string
+	OutputOnWholeFile(filename string) string
+}
+
+type FileScanner struct {
+	Finder    Finder
+	Filenames []string
+}
+
+func (fs FileScanner) GoThroughFiles() string {
 
 	var output string
 
-	for _, filename := range files {
+	for _, filename := range fs.Filenames {
 
 		file, err := os.Open(filename)
 
@@ -26,11 +33,11 @@ func GoThroughFiles(
 			for scanner.Scan() {
 				line := scanner.Text()
 
-				output += actionOnLine(line, filename)
+				output += fs.Finder.OutputOnLine(line, filename)
 			}
 		}
 		file.Close()
-		output += actionOnWholeFile(filename)
+		output += fs.Finder.OutputOnWholeFile(filename)
 	}
 	return output
 }

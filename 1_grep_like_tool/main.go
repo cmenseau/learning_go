@@ -13,6 +13,10 @@ func main() {
 
 	eng := grep_engine.Engine{Request: &req}
 
-	fmt.Print(grep_file_scanner.GoThroughFiles(
-		eng.Request.Filenames, eng.OutputOnLine, eng.OutputOnWholeFile))
+	scanner := grep_file_scanner.FileScanner{
+		Finder:    eng,
+		Filenames: req.Filenames,
+	}
+
+	fmt.Print(scanner.GoThroughFiles())
 }
