@@ -44,25 +44,25 @@ FILE:./test_material/test2.txt
 		{
 			files:     []string{"./test_material"},
 			recursive: true,
-			line_out: `a:./test_material/test1.txt
-b:./test_material/test1.txt
-c:./test_material/test1.txt
-FILE:./test_material/test1.txt
-hello:./test_material/test2.txt
-hi:./test_material/test2.txt
-good afternoon:./test_material/test2.txt
-FILE:./test_material/test2.txt
-a line:./test_material/inner/innertest
-another line:./test_material/inner/innertest
-FILE:./test_material/inner/innertest.txt
+			line_out: `a line:test_material/inner/innertest.txt
+another line:test_material/inner/innertest.txt
+FILE:test_material/inner/innertest.txt
+a:test_material/test1.txt
+b:test_material/test1.txt
+c:test_material/test1.txt
+FILE:test_material/test1.txt
+hello:test_material/test2.txt
+hi:test_material/test2.txt
+good afternoon:test_material/test2.txt
+FILE:test_material/test2.txt
 `,
 		},
 		{
 			files:     []string{"./test_material/inner"},
 			recursive: true,
-			line_out: `a line:./test_material/inner/innertest
-another line:./test_material/inner/innertest
-FILE:./test_material/inner/innertest.txt
+			line_out: `a line:test_material/inner/innertest.txt
+another line:test_material/inner/innertest.txt
+FILE:test_material/inner/innertest.txt
 `,
 		},
 		{
@@ -79,7 +79,7 @@ FILE:./test_material/test2.txt
 	for _, subtest := range subtests {
 		scanner := FileScanner{
 			Finder:    EngineMock{},
-			Filenames: subtest.files,
+			Paths:     subtest.files,
 			Recursive: subtest.recursive,
 		}
 		var out = scanner.GoThroughFiles()
