@@ -93,14 +93,3 @@ FILE:./test_material/test2.txt
 		}
 	}
 }
-
-// go test ./internal/file_scanner -bench=.
-func Benchmark1234(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		scanner := FileScanner{
-			Finder:    EngineMock{},
-			Filenames: []string{"./test_material/test2.txt"},
-		}
-		scanner.GoThroughFiles()
-	}
-}
