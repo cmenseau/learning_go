@@ -11,6 +11,7 @@ Supported options :
 - -w : match word
 - -x : match whole line
 - -v : reverse (get lines not matching)
+- -r : recursive (read all files under each directory)
 Output control options :
 - -o : only matching
 - -c : count matching lines in file
