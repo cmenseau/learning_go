@@ -1,6 +1,7 @@
 package grep_line_select
 
 import (
+	"fmt"
 	grep_colors "main/internal/colors"
 	"regexp"
 	"strings"
@@ -29,22 +30,30 @@ type highlightedLine struct {
 	keywordRanges [][2]int
 }
 
-func GetOutputLine(keyword string, line string, search SearchInfo) string {
-	out_line := lineSelectorPipeline(keyword, line, search)
-	return colorResults(out_line)
+func GetOutputLine(keyword string, line string, search SearchInfo) (string, error) {
+	out_line, err := lineSelectorPipeline(keyword, line, search)
+	return colorResults(out_line), err
 }
 
-func lineSelectorPipeline(keyword string, line string, search SearchInfo) highlightedLine {
+func lineSelectorPipeline(keyword string, line string, search SearchInfo) (output highlightedLine, err error) {
 
-	var indexes = getMatchingPatternIndexes(keyword, line)
+	indexes, err := getMatchingPatternIndexes(keyword, line)
+
+	if err != nil {
+		err = fmt.Errorf("can't get matching pattern : %w", err)
+		return
+	}
 
 	if !search.CaseInsensitive {
-		indexes = applyCaseSensitiveSelection(keyword, line, indexes)
+		indexes, err = applyCaseSensitiveSelection(keyword, line, indexes)
+
+		if err != nil {
+			err = fmt.Errorf("can't select case sensitively : %w", err)
+			return
+		}
 	}
 
 	indexes = applyMatchGranularity(keyword, line, indexes, search.Granularity)
-
-	var output highlightedLine
 
 	if len(indexes) > 0 {
 		// at least 1 thing found : line should be displayed
@@ -64,7 +73,7 @@ func lineSelectorPipeline(keyword string, line string, search SearchInfo) highli
 		output.keywordRanges = indexes
 	}
 
-	return output
+	return output, nil
 	// we need to return both line and indexes because line could
 	// be selected without any highlighted part (indexes={})
 }
@@ -185,12 +194,16 @@ func applyMatchGranularity(keyword string,
 	return seq_match_indexes
 }
 
-func applyCaseSensitiveSelection(keyword string, line string, indexes [][2]int) [][2]int {
-	case_sensitive_indexes := [][2]int{}
+func applyCaseSensitiveSelection(keyword string, line string, indexes [][2]int) (case_sensitive_indexes [][2]int, err error) {
 
+	//TODO bad : turning the bre syntax in go syntax on every line
 	keyword_escape_removed := turnBreSyntaxInGoSyntax(keyword)
-	re, _ := regexp.Compile(keyword_escape_removed)
-	// TODO err management
+	//TODO bad : compiling the regexp on every line
+	re, err := regexp.Compile(keyword_escape_removed)
+
+	if err != nil {
+		return
+	}
 
 	for _, idx := range indexes {
 		start := idx[0]
@@ -201,26 +214,27 @@ func applyCaseSensitiveSelection(keyword string, line string, indexes [][2]int) 
 
 		//TODO what about cases when keyword contains regular expression using surrounding context
 	}
-	return case_sensitive_indexes
+	return case_sensitive_indexes, nil
 }
 
-func getMatchingPatternIndexes(keyword string, line string) [][2]int {
-	var indexes [][2]int
-
+func getMatchingPatternIndexes(keyword string, line string) (indexes [][2]int, err error) {
+	//TODO bad : turning the bre syntax in go syntax on every line
 	keyword_escape_removed := turnBreSyntaxInGoSyntax(keyword)
 
 	var lower_keyword = strings.ToLower(keyword_escape_removed)
 	var lower_line = strings.ToLower(line)
+	//TODO bad : compiling the regexp on every line
 
 	re, err := regexp.Compile(lower_keyword)
-	if err == nil {
-		for _, idx_pair := range re.FindAllStringIndex(lower_line, -1) {
-			indexes = append(indexes, [2]int{idx_pair[0], idx_pair[1]})
-		}
-	} else {
-		// TODO err management
+
+	if err != nil {
+		return
 	}
-	return indexes
+
+	for _, idx_pair := range re.FindAllStringIndex(lower_line, -1) {
+		indexes = append(indexes, [2]int{idx_pair[0], idx_pair[1]})
+	}
+	return indexes, nil
 }
 
 func turnBreSyntaxInGoSyntax(keyword string) string {

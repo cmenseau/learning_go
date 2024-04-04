@@ -29,7 +29,8 @@ type Engine struct {
 
 func (e Engine) OutputOnLine(line string, filename string) string {
 
-	line_output := grep_line_select.GetOutputLine(e.Request.Pattern, line, e.Request.Search)
+	// TODO : handle err at engine/file scanner level
+	line_output, _ := grep_line_select.GetOutputLine(e.Request.Pattern, line, e.Request.Search)
 
 	if e.Request.FileOutput.SuppressNormalOutput() {
 		e.Request.FileOutput.ProcessOutputLine(line_output, filename)
