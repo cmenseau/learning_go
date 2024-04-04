@@ -21,7 +21,7 @@ Prefix options :
 
 Keyword format : Keyword is understood as a regexp (BRE basic format)
 
-Regexo known limitations : 
+Regexp known limitations : 
 - \\< (word start)
 - \\> (word end)
 - | ("|" char)
