@@ -19,6 +19,7 @@ type Request struct {
 func (req Request) Equal(req2 Request) bool {
 	return req.Pattern == req2.Pattern &&
 		slices.Equal(req.Paths, req2.Paths) &&
+		req.Recursive == req2.Recursive &&
 		req.Search == req2.Search &&
 		req.FileOutput.Equal(req2.FileOutput) &&
 		req.LinePrefix == req2.LinePrefix
