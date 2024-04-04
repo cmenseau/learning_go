@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"unicode/utf8"
 )
 
 type Finder interface {
@@ -33,7 +34,11 @@ func (fs FileScanner) GoThroughFiles() string {
 			for scanner.Scan() {
 				line := scanner.Text()
 
-				output += fs.Finder.OutputOnLine(line, filename)
+				if utf8.ValidString(line) {
+					output += fs.Finder.OutputOnLine(line, filename)
+				} else {
+					fmt.Fprintln(os.Stderr, "invalid line, not utf-8")
+				}
 			}
 		}
 		file.Close()
