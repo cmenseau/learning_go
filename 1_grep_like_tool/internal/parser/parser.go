@@ -48,9 +48,9 @@ func ParseArgs(args []string) (req grep_engine.Request, err error) {
 
 	req.Pattern = args[pattern_idx]
 
-	req.Filenames = args[first_filename_idx:]
+	req.Paths = args[first_filename_idx:]
 
-	if len(req.Filenames) > 1 || slices.Contains(options, "H") {
+	if len(req.Paths) > 1 || slices.Contains(options, "H") {
 		req.LinePrefix.WithFilename = true
 	}
 

@@ -9,7 +9,8 @@ import (
 
 type Request struct {
 	Pattern    string
-	Filenames  []string
+	Paths      []string
+	Recursive  bool
 	Search     grep_line_select.SearchInfo
 	FileOutput grep_output_control.FileOutputRequest
 	LinePrefix grep_line_prefix_control.LinePrefixRequest
@@ -17,7 +18,7 @@ type Request struct {
 
 func (req Request) Equal(req2 Request) bool {
 	return req.Pattern == req2.Pattern &&
-		slices.Equal(req.Filenames, req2.Filenames) &&
+		slices.Equal(req.Paths, req2.Paths) &&
 		req.Search == req2.Search &&
 		req.FileOutput.Equal(req2.FileOutput) &&
 		req.LinePrefix == req2.LinePrefix

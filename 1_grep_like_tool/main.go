@@ -20,7 +20,8 @@ func run(args []string) {
 
 	scanner := grep_file_scanner.FileScanner{
 		Finder:    eng,
-		Filenames: req.Filenames,
+		Paths:     req.Paths,
+		Recursive: req.Recursive,
 	}
 
 	fmt.Print(scanner.GoThroughFiles())
