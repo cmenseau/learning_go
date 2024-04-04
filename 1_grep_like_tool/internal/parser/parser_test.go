@@ -8,6 +8,9 @@ import (
 	"testing"
 )
 
+// TODO : add path validator in parser
+// TODO : use real filepath to test
+
 func TestParser(test *testing.T) {
 	var subtests = []struct {
 		args []string
@@ -30,12 +33,12 @@ func TestParser(test *testing.T) {
 			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"a.txt", "b.txt", "c.txt"}, Search: grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
 		{
-			args: []string{"-wr", "lo", "a.txt", "b.txt", "c.txt"},
-			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"a.txt", "b.txt", "c.txt"}, Recursive: true, Search: grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+			args: []string{"-wr", "lo", "test_material/recursive/folder1/a.txt", "test_material/recursive/folder2/b.txt"},
+			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"test_material/recursive/folder1/a.txt", "test_material/recursive/folder2/b.txt"}, Recursive: true, Search: grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
 		{
-			args: []string{"-wr", "lo", "folder1", "folder2"},
-			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"folder1", "folder2"}, Recursive: true, Search: grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+			args: []string{"-wr", "lo", "test_material/recursive/folder1", "test_material/recursive/folder2"},
+			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"test_material/recursive/folder1", "test_material/recursive/folder2"}, Recursive: true, Search: grep_line_select.SearchInfo{Granularity: grep_line_select.WordGranularity}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
 		{
 			args: []string{"-iwx", "lo", "a.txt"},
@@ -46,12 +49,12 @@ func TestParser(test *testing.T) {
 			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"a.txt"}, Search: grep_line_select.SearchInfo{CaseInsensitive: true, Granularity: grep_line_select.LineGranularity}},
 		},
 		{
-			args: []string{"-wvr", "lo", "a.txt"},
-			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"a.txt"}, Recursive: true, Search: grep_line_select.SearchInfo{InvertMatching: true, Granularity: grep_line_select.WordGranularity}},
+			args: []string{"-wvr", "lo", "test_material/recursive/folder1/a.txt"},
+			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"test_material/recursive/folder1/a.txt"}, Recursive: true, Search: grep_line_select.SearchInfo{InvertMatching: true, Granularity: grep_line_select.WordGranularity}},
 		},
 		{
-			args: []string{"-wvr", "lo", "path/to/folder"},
-			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"path/to/folder"}, Recursive: true, Search: grep_line_select.SearchInfo{InvertMatching: true, Granularity: grep_line_select.WordGranularity}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
+			args: []string{"-wvr", "lo", "test_material/recursive/folder1"},
+			req:  grep_engine.Request{Pattern: "lo", Paths: []string{"test_material/recursive/folder1"}, Recursive: true, Search: grep_line_select.SearchInfo{InvertMatching: true, Granularity: grep_line_select.WordGranularity}, LinePrefix: grep_line_prefix_control.LinePrefixRequest{WithFilename: true}},
 		},
 		{
 			args: []string{"-wvr", "lo", "."},

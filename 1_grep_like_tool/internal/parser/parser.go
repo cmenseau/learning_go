@@ -54,6 +54,18 @@ func ParseArgs(args []string) (req grep_engine.Request, err error) {
 		req.LinePrefix.WithFilename = true
 	}
 
+	// -r with only 1 filename : req.LinePrefix.WithFilename => false
+	// -r with 1+ dir : req.LinePrefix.WithFilename => true
+	if slices.Contains(options, "r") {
+		req.Recursive = true
+
+		if fi, err := os.Stat(req.Paths[0]); len(req.Paths) == 1 && err == nil && !fi.IsDir() {
+			req.LinePrefix.WithFilename = false
+		} else {
+			req.LinePrefix.WithFilename = true
+		}
+	}
+
 	if slices.Contains(options, "i") {
 		req.Search.CaseInsensitive = true
 	}
