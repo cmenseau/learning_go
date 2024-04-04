@@ -8,8 +8,8 @@ import (
 	"os"
 )
 
-func main() {
-	req, err := grep_parser.ParseArgs(os.Args[1:])
+func run(args []string) {
+	req, err := grep_parser.ParseArgs(args)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -24,4 +24,8 @@ func main() {
 	}
 
 	fmt.Print(scanner.GoThroughFiles())
+}
+
+func main() {
+	run(os.Args[1:])
 }
