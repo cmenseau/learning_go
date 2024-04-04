@@ -9,7 +9,12 @@ import (
 )
 
 func main() {
-	req := grep_parser.ParseArgs(os.Args[1:])
+	req, err := grep_parser.ParseArgs(os.Args[1:])
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, err.Error())
+		os.Exit(2)
+	}
 
 	eng := grep_engine.Engine{Request: &req}
 

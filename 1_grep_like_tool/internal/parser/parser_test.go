@@ -90,9 +90,36 @@ func TestParser(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		var req_out = ParseArgs(subtest.args)
+		var req_out, err_out = ParseArgs(subtest.args)
 
-		if !req_out.Equal(subtest.req) {
+		if !req_out.Equal(subtest.req) && err_out == nil {
+			test.Errorf("for input \"%#v\"\nwanted: %#v\n   got: %#v",
+				subtest.args,
+				subtest.req,
+				req_out)
+		}
+	}
+}
+
+func TestParserWrongInput(test *testing.T) {
+	var subtests = []struct {
+		args []string
+		req  grep_engine.Request
+	}{
+		{
+			args: []string{"a.txt"},
+			req:  grep_engine.Request{},
+		},
+		{
+			args: []string{"-i", "a.txt"},
+			req:  grep_engine.Request{},
+		},
+	}
+
+	for _, subtest := range subtests {
+		var req_out, err_out = ParseArgs(subtest.args)
+
+		if !req_out.Equal(subtest.req) && err_out != nil {
 			test.Errorf("for input \"%#v\"\nwanted: %#v\n   got: %#v",
 				subtest.args,
 				subtest.req,

@@ -1,6 +1,7 @@
 package grep_parser
 
 import (
+	"errors"
 	"fmt"
 	grep_engine "main/internal/engine"
 	grep_line_select "main/internal/line_select"
@@ -10,18 +11,17 @@ import (
 )
 
 // parse args and returns GrepRequest
-func ParseArgs(args []string) grep_engine.Request {
-	var req grep_engine.Request
+func ParseArgs(args []string) (req grep_engine.Request, err error) {
 
 	if len(args) < 2 {
-		fmt.Fprintf(os.Stderr, "Expecting more than 2 args, got %v\n", os.Args[1:])
-		os.Exit(2)
+		err = fmt.Errorf("expecting more than 2 args, got %v", os.Args[1:])
+		return
 	}
 
 	var options []string
 	var pattern_idx int
 	var first_filename_idx int
-	var pattern_found bool
+	var pattern_found, filename_found bool
 
 	for i, val := range args {
 		if strings.HasPrefix(val, "-") {
@@ -35,12 +35,16 @@ func ParseArgs(args []string) grep_engine.Request {
 				pattern_found = true
 			} else {
 				first_filename_idx = i
+				filename_found = true
 				break
 			}
 		}
 	}
 
-	// TODO : handle error when no pattern found
+	if !pattern_found || !filename_found {
+		err = errors.New("expecting arguments : [options...] keyword file... ")
+		return
+	}
 
 	req.Pattern = args[pattern_idx]
 
@@ -80,5 +84,5 @@ func ParseArgs(args []string) grep_engine.Request {
 		req.FileOutput.CountLines = true
 	}
 
-	return req
+	return
 }
