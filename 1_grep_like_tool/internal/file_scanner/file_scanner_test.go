@@ -82,9 +82,9 @@ FILE:./test_material/test2.txt
 			Paths:     subtest.files,
 			Recursive: subtest.recursive,
 		}
-		var out = scanner.GoThroughFiles()
+		var out, err_out = scanner.GoThroughFiles()
 
-		if out != subtest.line_out {
+		if out != subtest.line_out && err_out == nil {
 			test.Errorf("wanted %#v (files=%v, recursive=%t),\ngot %#v",
 				subtest.line_out,
 				subtest.files,

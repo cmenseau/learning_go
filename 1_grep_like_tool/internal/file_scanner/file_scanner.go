@@ -3,6 +3,7 @@ package grep_file_scanner
 import (
 	"bufio"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"unicode/utf8"
@@ -19,32 +20,37 @@ type FileScanner struct {
 	Recursive bool
 }
 
-func (fs FileScanner) GoThroughFiles() string {
+func (fileScanner FileScanner) GoThroughFiles() (string, error) {
 
 	var output string
 
-	if !fs.Recursive {
-		for _, filename := range fs.Paths {
-			output += fs.processFile(filename)
+	if !fileScanner.Recursive {
+		for _, filename := range fileScanner.Paths {
+			output += fileScanner.processFile(filename)
 		}
 	} else {
-		for _, filename := range fs.Paths {
+		for _, filename := range fileScanner.Paths {
 
-			visitor := func(path string, fi os.FileInfo, err error) error {
+			visitor := func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err
 				}
-				if !fi.IsDir() {
-					output += fs.processFile(path)
+				if !d.IsDir() {
+					output += fileScanner.processFile(path)
 				}
 				return nil
 			}
 
-			filepath.Walk(filename, visitor)
+			err := filepath.WalkDir(filename, visitor)
+
+			if err != nil {
+				err = fmt.Errorf("error while walking dir : %w", err)
+				return output, err
+			}
 		}
 	}
 
-	return output
+	return output, nil
 }
 
 func (fs FileScanner) processFile(filename string) (output string) {
@@ -61,9 +67,11 @@ func (fs FileScanner) processFile(filename string) (output string) {
 
 			if utf8.ValidString(line) {
 				output += fs.Finder.OutputOnLine(line, filename)
-			} else {
-				fmt.Fprintln(os.Stderr, "invalid line, not utf-8")
-			}
+			} // else {
+			// 	fmt.Fprintln(os.Stderr, "invalid line, not utf-8")
+			// }
+
+			// TODO : decide what to do with this
 		}
 	}
 	file.Close()
