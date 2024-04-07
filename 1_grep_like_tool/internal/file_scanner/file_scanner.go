@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sync"
 	"unicode/utf8"
 )
 
@@ -22,11 +23,21 @@ type FileScanner struct {
 
 func (fileScanner FileScanner) GoThroughFiles() (string, error) {
 
-	var output string
+	var outputCh = make(chan string, 10)
+	var workersCh = make(chan bool, 5)
+	var resultCh = make(chan string)
+	var workersWg = sync.WaitGroup{}
+
+	go fileScanner.collectOutput(outputCh, resultCh)
+
+	// TODO :
+	// order of the results is important : for each file AND for each line
 
 	if !fileScanner.Recursive {
 		for _, filename := range fileScanner.Paths {
-			output += fileScanner.processFile(filename)
+			workersCh <- true
+			workersWg.Add(1)
+			go fileScanner.processFile(filename, outputCh, workersCh, &workersWg)
 		}
 	} else {
 		for _, filename := range fileScanner.Paths {
@@ -36,7 +47,9 @@ func (fileScanner FileScanner) GoThroughFiles() (string, error) {
 					return err
 				}
 				if !d.IsDir() {
-					output += fileScanner.processFile(path)
+					workersCh <- true
+					workersWg.Add(1)
+					go fileScanner.processFile(path, outputCh, workersCh, &workersWg)
 				}
 				return nil
 			}
@@ -45,15 +58,28 @@ func (fileScanner FileScanner) GoThroughFiles() (string, error) {
 
 			if err != nil {
 				err = fmt.Errorf("error while walking dir : %w", err)
-				return output, err
+				return "", err
 			}
 		}
 	}
 
-	return output, nil
+	// handle output now
+
+	workersWg.Wait()
+	close(outputCh) // triggers return of collector (send to result)
+
+	return <-resultCh, nil
 }
 
-func (fs FileScanner) processFile(filename string) (output string) {
+func (fs FileScanner) collectOutput(matchingLines <-chan string, result chan<- string) {
+	var output string
+	for line := range matchingLines {
+		output += line
+	}
+	result <- output
+}
+
+func (fs FileScanner) processFile(filename string, output chan<- string, workersCh <-chan bool, workersWg *sync.WaitGroup) {
 	file, err := os.Open(filename)
 
 	if err != nil {
@@ -66,7 +92,7 @@ func (fs FileScanner) processFile(filename string) (output string) {
 			line := scanner.Text()
 
 			if utf8.ValidString(line) {
-				output += fs.Finder.OutputOnLine(line, filename)
+				output <- fs.Finder.OutputOnLine(line, filename)
 			} // else {
 			// 	fmt.Fprintln(os.Stderr, "invalid line, not utf-8")
 			// }
@@ -75,6 +101,7 @@ func (fs FileScanner) processFile(filename string) (output string) {
 		}
 	}
 	file.Close()
-	output += fs.Finder.OutputOnWholeFile(filename)
-	return
+	output <- fs.Finder.OutputOnWholeFile(filename)
+	<-workersCh
+	workersWg.Done()
 }
