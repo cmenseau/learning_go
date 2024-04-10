@@ -44,7 +44,14 @@ func TestSelectHightlight(test *testing.T) {
 	search := SearchInfo{}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
@@ -96,7 +103,14 @@ func TestSelectHightlightInsensitive(test *testing.T) {
 	search := SearchInfo{CaseInsensitive: true}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
@@ -139,7 +153,14 @@ func TestSelectReverse(test *testing.T) {
 	search := SearchInfo{InvertMatching: true}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
@@ -182,7 +203,14 @@ func TestSelectWholeLine(test *testing.T) {
 	search := SearchInfo{Granularity: LineGranularity}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
@@ -237,7 +265,14 @@ func TestSelectWords(test *testing.T) {
 	search := SearchInfo{Granularity: WordGranularity}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
@@ -294,7 +329,14 @@ func TestSelectInsensitiveWords(test *testing.T) {
 	search.CaseInsensitive = true
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
@@ -418,7 +460,14 @@ func TestSelectRegExpKeyword(test *testing.T) {
 	search := SearchInfo{}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
@@ -432,28 +481,20 @@ func TestSelectRegExpKeyword(test *testing.T) {
 func TestRegExpErrorHandling(test *testing.T) {
 	var subtests = []struct {
 		keyword string
-		text    string
-		exp_out string
-		col_out [][2]int
 	}{
 		{
 			keyword: `\(D\|d`,
-			text:    "Dis-donc tu es bien dodu",
-			exp_out: "Dis-donc tu es bien dodu",
-			col_out: [][2]int{{0, 1}, {4, 5}, {20, 21}, {22, 23}},
 		},
 	}
 	search := SearchInfo{}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var _, err_out = NewLineSelector(subtest.keyword, search)
 
 		// we expect err_out != nil
 		if err_out == nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
-				subtest.exp_out, subtest.col_out,
-				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+			test.Errorf("wanted %#v (\"%v\"), got %#v,",
+				nil, subtest.keyword, err_out)
 		}
 	}
 }
@@ -481,7 +522,14 @@ func TestRegExpNotSupported(test *testing.T) {
 	search := SearchInfo{}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
@@ -538,7 +586,14 @@ func TestSelectOnlyMatching(test *testing.T) {
 	search := SearchInfo{OnlyMatching: true}
 
 	for _, subtest := range subtests {
-		var out, err_out = lineSelectorPipeline(subtest.keyword, subtest.text, search)
+		var ls, err_out = NewLineSelector(subtest.keyword, search)
+
+		if err_out != nil {
+			test.Errorf("wanted %#v (\"%v\"), got %#v",
+				nil, subtest.keyword, err_out)
+		}
+
+		out, err_out := ls.lineSelectorPipeline(subtest.text)
 
 		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",

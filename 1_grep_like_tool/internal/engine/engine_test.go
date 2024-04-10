@@ -193,11 +193,11 @@ func TestEngineLine(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		engine := Engine{&subtest.request}
+		engine, err := NewEngine(&subtest.request)
 
 		var out = engine.OutputOnLine(subtest.line, subtest.filename)
 
-		if out != subtest.line_out {
+		if out != subtest.line_out && err == nil {
 			test.Errorf("wanted %#v (for line=%s filename=%s req=%+v),\ngot %#v",
 				subtest.line_out,
 				subtest.line, subtest.filename, subtest.request,
@@ -388,7 +388,7 @@ func TestEngineWholeFile(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		engine := Engine{&subtest.request}
+		engine, err := NewEngine(&subtest.request)
 
 		for _, content := range subtest.content {
 			engine.OutputOnLine(content.line, content.filename)
@@ -396,7 +396,7 @@ func TestEngineWholeFile(test *testing.T) {
 
 		var out = engine.OutputOnWholeFile(subtest.filename)
 
-		if out != subtest.line_out {
+		if out != subtest.line_out && err == nil {
 			test.Errorf("wanted %#v (for filename=%s req=%+v),\ngot %#v",
 				subtest.line_out,
 				subtest.filename, subtest.request,

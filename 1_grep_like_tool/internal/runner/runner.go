@@ -16,7 +16,12 @@ func Run(args []string, out *os.File) {
 		os.Exit(2)
 	}
 
-	eng := grep_engine.Engine{Request: &req}
+	eng, err := grep_engine.NewEngine(&req)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(2)
+	}
 
 	scanner := grep_file_scanner.FileScanner{
 		Finder:    eng,

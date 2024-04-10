@@ -1,6 +1,7 @@
 package grep_engine
 
 import (
+	"fmt"
 	grep_line_prefix_control "main/internal/line_prefix_control"
 	grep_line_select "main/internal/line_select"
 	grep_output_control "main/internal/output_control"
@@ -26,13 +27,27 @@ func (req Request) Equal(req2 Request) bool {
 }
 
 type Engine struct {
-	Request *Request
+	Request      *Request
+	LineSelector grep_line_select.LineSelector
+}
+
+func NewEngine(req *Request) (Engine, error) {
+	var e Engine
+	e.Request = req
+	ls, err := grep_line_select.NewLineSelector(req.Pattern, req.Search)
+
+	if err != nil {
+		return Engine{}, fmt.Errorf("create engine : %w", err)
+	} else {
+		e.LineSelector = ls
+	}
+	return e, nil
 }
 
 func (e Engine) OutputOnLine(line string, filename string) string {
 
 	// TODO : handle err at engine/file scanner level
-	line_output, _ := grep_line_select.GetOutputLine(e.Request.Pattern, line, e.Request.Search)
+	line_output, _ := e.LineSelector.GetOutputLine(line)
 
 	if e.Request.FileOutput.SuppressNormalOutput() {
 		e.Request.FileOutput.ProcessOutputLine(line_output, filename)
