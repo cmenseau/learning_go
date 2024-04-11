@@ -64,27 +64,17 @@ func NewLineSelector(keyword string, search SearchInfo) (LineSelector, error) {
 	return ls, nil
 }
 
-func (ls LineSelector) GetOutputLine(line string) (string, error) {
-	out_line, err := ls.lineSelectorPipeline(line)
-	return colorResults(out_line), err
+func (ls LineSelector) GetOutputLine(line string) string {
+	out_line := ls.lineSelectorPipeline(line)
+	return colorResults(out_line)
 }
 
-func (ls LineSelector) lineSelectorPipeline(line string) (output highlightedLine, err error) {
+func (ls LineSelector) lineSelectorPipeline(line string) (output highlightedLine) {
 
-	indexes, err := ls.getMatchingPatternIndexes(line)
-
-	if err != nil {
-		err = fmt.Errorf("can't get matching pattern : %w", err)
-		return
-	}
+	indexes := ls.getMatchingPatternIndexes(line)
 
 	if !ls.Search.CaseInsensitive {
-		indexes, err = ls.applyCaseSensitiveSelection(line, indexes)
-
-		if err != nil {
-			err = fmt.Errorf("can't select case sensitively : %w", err)
-			return
-		}
+		indexes = ls.applyCaseSensitiveSelection(line, indexes)
 	}
 
 	indexes = ls.applyMatchGranularity(line, indexes)
@@ -107,7 +97,7 @@ func (ls LineSelector) lineSelectorPipeline(line string) (output highlightedLine
 		output.keywordRanges = indexes
 	}
 
-	return output, nil
+	return output
 	// we need to return both line and indexes because line could
 	// be selected without any highlighted part (indexes={})
 }
@@ -227,11 +217,10 @@ func (ls LineSelector) applyMatchGranularity(
 	return seq_match_indexes
 }
 
-func (ls LineSelector) applyCaseSensitiveSelection(line string, indexes [][2]int) (case_sensitive_indexes [][2]int, err error) {
+func (ls LineSelector) applyCaseSensitiveSelection(line string, indexes [][2]int) (case_sensitive_indexes [][2]int) {
 
-	// TODO
 	if ls.Search.CaseInsensitive {
-		panic("programming error")
+		panic("programming error : should be used for case sensitive scenarios only")
 	}
 
 	for _, idx := range indexes {
@@ -243,17 +232,17 @@ func (ls LineSelector) applyCaseSensitiveSelection(line string, indexes [][2]int
 
 		//TODO what about cases when keyword contains regular expression using surrounding context
 	}
-	return case_sensitive_indexes, nil
+	return case_sensitive_indexes
 }
 
-func (ls LineSelector) getMatchingPatternIndexes(line string) (indexes [][2]int, err error) {
+func (ls LineSelector) getMatchingPatternIndexes(line string) (indexes [][2]int) {
 
 	var lower_line = strings.ToLower(line)
 
 	for _, idx_pair := range ls.regexp.FindAllStringIndex(lower_line, -1) {
 		indexes = append(indexes, [2]int{idx_pair[0], idx_pair[1]})
 	}
-	return indexes, nil
+	return indexes
 }
 
 func turnBreSyntaxInGoSyntax(keyword string) string {

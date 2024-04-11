@@ -51,9 +51,9 @@ func TestSelectHightlight(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
 			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
@@ -110,13 +110,13 @@ func TestSelectHightlightInsensitive(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -160,13 +160,13 @@ func TestSelectReverse(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -210,13 +210,13 @@ func TestSelectWholeLine(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -272,13 +272,13 @@ func TestSelectWords(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -336,13 +336,13 @@ func TestSelectInsensitiveWords(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -467,13 +467,13 @@ func TestSelectRegExpKeyword(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -529,13 +529,13 @@ func TestRegExpNotSupported(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }
@@ -593,13 +593,13 @@ func TestSelectOnlyMatching(test *testing.T) {
 				nil, subtest.keyword, err_out)
 		}
 
-		out, err_out := ls.lineSelectorPipeline(subtest.text)
+		out := ls.lineSelectorPipeline(subtest.text)
 
-		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) || err_out != nil {
-			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v, %v",
+		if out.line != subtest.exp_out || !slices.Equal(out.keywordRanges, subtest.col_out) {
+			test.Errorf("wanted %#v, %#v (\"%v\" in : %v), got %#v, %#v",
 				subtest.exp_out, subtest.col_out,
 				subtest.keyword, subtest.text,
-				out.line, out.keywordRanges, err_out)
+				out.line, out.keywordRanges)
 		}
 	}
 }

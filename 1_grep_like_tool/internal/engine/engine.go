@@ -46,8 +46,7 @@ func NewEngine(req *Request) (Engine, error) {
 
 func (e Engine) OutputOnLine(line string, filename string) string {
 
-	// TODO : handle err at engine/file scanner level
-	line_output, _ := e.LineSelector.GetOutputLine(line)
+	line_output := e.LineSelector.GetOutputLine(line)
 
 	if e.Request.FileOutput.SuppressNormalOutput() {
 		e.Request.FileOutput.ProcessOutputLine(line_output, filename)
