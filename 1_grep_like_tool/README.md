@@ -38,4 +38,4 @@ go test ./internal/package_folder/
 
 The program is somewhat concurrent (file scanning part)
 
-![Concurrency schema](/img/grep_like_tool_ccrcy.png)
+![Concurrency schema](./img/grep_like_tool_ccrcy.png)
