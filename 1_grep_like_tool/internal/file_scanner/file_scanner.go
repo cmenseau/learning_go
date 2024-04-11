@@ -3,6 +3,7 @@ package grep_file_scanner
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -39,12 +40,17 @@ func NewFileScanner(finder Finder, paths []string, recursive bool,
 	return fs
 }
 
-func (fileScanner FileScanner) GoThroughFiles() (string, error) {
+type typedMsg struct {
+	content string
+	isErr   bool
+}
+
+func (fileScanner FileScanner) GoThroughFiles() {
 
 	var workersCh = make(chan bool, workersNb)
-	var resultCh = make(chan string)
+	var resultCh = make(chan bool)
 	var workersWg = sync.WaitGroup{}
-	var filesOut chan chan string = make(chan chan string, parallelFilesCollectNb)
+	var filesOut chan chan typedMsg = make(chan chan typedMsg, parallelFilesCollectNb)
 	// fileOut can't be a list of chan string because we fill the list step by step and reassign it
 
 	go fileScanner.collectOutput(filesOut, resultCh)
@@ -54,6 +60,7 @@ func (fileScanner FileScanner) GoThroughFiles() (string, error) {
 
 	if !fileScanner.Recursive {
 		for _, filename := range fileScanner.Paths {
+
 			fileScanner.processFile(filename, workersCh, filesOut, &workersWg)
 		}
 
@@ -61,8 +68,16 @@ func (fileScanner FileScanner) GoThroughFiles() (string, error) {
 		for _, filename := range fileScanner.Paths {
 
 			visitor := func(path string, d fs.DirEntry, err error) error {
+
 				if err != nil {
-					return err
+					currentFileOut := make(chan typedMsg, parallelLinesCollectNb)
+					filesOut <- currentFileOut
+					currentFileOut <- typedMsg{
+						content: err.Error(),
+						isErr:   true,
+					}
+					close(currentFileOut)
+					return nil
 				}
 				if !d.IsDir() {
 					fileScanner.processFile(path, workersCh, filesOut, &workersWg)
@@ -70,40 +85,38 @@ func (fileScanner FileScanner) GoThroughFiles() (string, error) {
 				return nil
 			}
 
-			err := filepath.WalkDir(filename, visitor)
-
-			if err != nil {
-				err = fmt.Errorf("error while walking dir : %w", err)
-				return "", err
-			}
+			filepath.WalkDir(filename, visitor)
 		}
 	}
 	workersWg.Done()
 	workersWg.Wait()
 	close(filesOut) // triggers return of collector (send to result)
-	return <-resultCh, nil
+	<-resultCh
 }
 
-func (fs FileScanner) collectOutput(filesOut chan chan string, result chan<- string) {
-	var output string
+func (fs FileScanner) collectOutput(filesOut chan chan typedMsg, result chan<- bool) {
 	for fileCh := range filesOut {
 		// cannot put this in a goroutine because we need to keep order here
-		for line := range fileCh {
-			output += line
+		for msg := range fileCh {
+			if msg.isErr {
+				fmt.Fprintln(*fs.printErr, msg.content)
+			} else {
+				fmt.Fprint(*fs.printOut, msg.content)
+			}
 		}
 	}
-	result <- output
+	result <- true
 }
 
-func (fs FileScanner) processFile(filename string, workersCh chan bool, filesOut chan chan string, workersWg *sync.WaitGroup) {
-	currentFileOut := make(chan string, parallelLinesCollectNb)
+func (fs FileScanner) processFile(filename string, workersCh chan bool, filesOut chan chan typedMsg, workersWg *sync.WaitGroup) {
+	currentFileOut := make(chan typedMsg, parallelLinesCollectNb)
 	filesOut <- currentFileOut
 	workersCh <- true
 	workersWg.Add(1)
 	go fs.processFileConc(filename, currentFileOut, workersCh, workersWg)
 }
 
-func (fs FileScanner) processFileConc(filename string, currentFileOut chan<- string, workersCh <-chan bool, workersWg *sync.WaitGroup) {
+func (fs FileScanner) processFileConc(filename string, currentFileOut chan typedMsg, workersCh <-chan bool, workersWg *sync.WaitGroup) {
 	defer func() {
 		close(currentFileOut)
 		<-workersCh // free a worker spot
@@ -113,7 +126,10 @@ func (fs FileScanner) processFileConc(filename string, currentFileOut chan<- str
 	file, err := os.Open(filename)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Cannot open file %s because of %s", filename, err)
+		currentFileOut <- typedMsg{
+			content: err.Error(),
+			isErr:   true,
+		}
 	} else {
 		defer file.Close()
 
@@ -123,13 +139,19 @@ func (fs FileScanner) processFileConc(filename string, currentFileOut chan<- str
 			line := scanner.Text()
 
 			if utf8.ValidString(line) {
-				currentFileOut <- fs.Finder.OutputOnLine(line, filename)
+				currentFileOut <- typedMsg{
+					content: fs.Finder.OutputOnLine(line, filename),
+					isErr:   false,
+				}
 			} // else {
 			// 	fmt.Fprintln(os.Stderr, "invalid line, not utf-8")
 			// }
 
-			// TODO : decide what to do with this
+			// TODO : add support of -a option
 		}
-		currentFileOut <- fs.Finder.OutputOnWholeFile(filename)
+		currentFileOut <- typedMsg{
+			content: fs.Finder.OutputOnWholeFile(filename),
+			isErr:   false,
+		}
 	}
 }
