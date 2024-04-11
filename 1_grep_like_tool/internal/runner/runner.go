@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func Run(args []string, out *os.File) {
+func Run(args []string) {
 	req, err := grep_parser.ParseArgs(args)
 
 	if err != nil {
@@ -23,18 +23,8 @@ func Run(args []string, out *os.File) {
 		os.Exit(2)
 	}
 
-	scanner := grep_file_scanner.FileScanner{
-		Finder:    eng,
-		Paths:     req.Paths,
-		Recursive: req.Recursive,
-	}
+	scanner := grep_file_scanner.NewFileScanner(
+		eng, req.Paths, req.Recursive, os.Stdout, os.Stderr)
 
-	// TODO : GoThroughFiles : give out to write line 1 by 1
-	output, err := scanner.GoThroughFiles()
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	} else {
-		fmt.Fprint(out, output)
-	}
+	scanner.GoThroughFiles()
 }

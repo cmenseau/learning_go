@@ -23,6 +23,20 @@ type FileScanner struct {
 	Finder    Finder
 	Paths     []string // can be both file paths or dir paths
 	Recursive bool
+	printOut  *io.Writer
+	printErr  *io.Writer
+}
+
+func NewFileScanner(finder Finder, paths []string, recursive bool,
+	print_out io.Writer, print_err io.Writer) FileScanner {
+
+	var fs FileScanner
+	fs.Finder = finder
+	fs.Paths = paths
+	fs.Recursive = recursive
+	fs.printOut = &print_out
+	fs.printErr = &print_err
+	return fs
 }
 
 func (fileScanner FileScanner) GoThroughFiles() (string, error) {

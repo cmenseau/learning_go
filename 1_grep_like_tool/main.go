@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	grep_runner.Run(os.Args[1:], os.Stdout)
+	grep_runner.Run(os.Args[1:])
 }
