@@ -11,12 +11,6 @@ type FileOutputRequest struct {
 	countMatchingLinesMap map[string]int
 }
 
-func (fos FileOutputRequest) Equal(fos2 FileOutputRequest) bool {
-	return fos.CountLines == fos2.CountLines &&
-		fos.FilesWithoutMatch == fos2.FilesWithoutMatch &&
-		fos.FilesWithMatch == fos2.FilesWithMatch
-}
-
 func (fos FileOutputRequest) SuppressNormalOutput() bool {
 	return fos.CountLines ||
 		fos.FilesWithoutMatch ||

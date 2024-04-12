@@ -5,6 +5,7 @@ import (
 	grep_line_prefix_control "main/internal/line_prefix_control"
 	grep_line_select "main/internal/line_select"
 	grep_output_control "main/internal/output_control"
+	"reflect"
 	"testing"
 )
 
@@ -117,7 +118,7 @@ func TestParser(test *testing.T) {
 	for _, subtest := range subtests {
 		var req_out, err_out = ParseArgs(subtest.args)
 
-		if !req_out.Equal(subtest.req) && err_out == nil {
+		if !reflect.DeepEqual(req_out, subtest.req) && err_out == nil {
 			test.Errorf("for input \"%#v\"\nwanted: %#v\n   got: %#v",
 				subtest.args,
 				subtest.req,
@@ -144,7 +145,7 @@ func TestParserWrongInput(test *testing.T) {
 	for _, subtest := range subtests {
 		var req_out, err_out = ParseArgs(subtest.args)
 
-		if !req_out.Equal(subtest.req) && err_out != nil {
+		if !reflect.DeepEqual(req_out, subtest.req) && err_out != nil {
 			test.Errorf("for input \"%#v\"\nwanted: %#v\n   got: %#v",
 				subtest.args,
 				subtest.req,

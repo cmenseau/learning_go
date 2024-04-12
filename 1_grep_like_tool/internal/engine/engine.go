@@ -5,7 +5,6 @@ import (
 	grep_line_prefix_control "main/internal/line_prefix_control"
 	grep_line_select "main/internal/line_select"
 	grep_output_control "main/internal/output_control"
-	"slices"
 )
 
 type Request struct {
@@ -15,15 +14,6 @@ type Request struct {
 	Search     grep_line_select.SearchInfo
 	FileOutput grep_output_control.FileOutputRequest
 	LinePrefix grep_line_prefix_control.LinePrefixRequest
-}
-
-func (req Request) Equal(req2 Request) bool {
-	return req.Pattern == req2.Pattern &&
-		slices.Equal(req.Paths, req2.Paths) &&
-		req.Recursive == req2.Recursive &&
-		req.Search == req2.Search &&
-		req.FileOutput.Equal(req2.FileOutput) &&
-		req.LinePrefix == req2.LinePrefix
 }
 
 type Engine struct {
