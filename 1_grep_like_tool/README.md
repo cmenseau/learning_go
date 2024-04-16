@@ -1,5 +1,6 @@
 Making my own grep-like tool : find words and patterns from a text source
 
+## How to use
 Run with 
 ```
 cd src/main
@@ -29,13 +30,21 @@ Regexp known limitations :
 - \\> (word end)
 - | ("|" char)
 
+## Testing 
 Run tests with
 ```
 cd src/main
 go test ./...
 go test ./internal/package_folder/
+go test ./... -cover
 ``` 
 
+## Concurrency
 The program is somewhat concurrent (file scanning part)
 
 ![Concurrency schema](./img/grep_like_tool_ccrcy.png)
+
+## Benchmarking
+
+See [benchmark result notes](./benchmark/out/results.md)
+
