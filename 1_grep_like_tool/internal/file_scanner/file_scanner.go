@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"unicode/utf8"
 )
@@ -95,15 +96,22 @@ func (fileScanner FileScanner) GoThroughFiles() {
 }
 
 func (fs FileScanner) collectOutput(filesOut chan chan typedMsg, result chan<- bool) {
+	var outBuffer strings.Builder
 	for fileCh := range filesOut {
 		// cannot put this in a goroutine because we need to keep order here
 		for msg := range fileCh {
 			if msg.isErr {
+				// flush out, to print error
+				fmt.Fprint(*fs.printOut, outBuffer.String())
+				outBuffer.Reset()
 				fmt.Fprintln(*fs.printErr, msg.content)
 			} else {
-				fmt.Fprint(*fs.printOut, msg.content)
+				outBuffer.WriteString(msg.content)
 			}
 		}
+	}
+	if outBuffer.Len() != 0 {
+		fmt.Fprint(*fs.printOut, outBuffer.String())
 	}
 	result <- true
 }
