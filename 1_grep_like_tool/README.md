@@ -48,3 +48,15 @@ The program is somewhat concurrent (file scanning part)
 
 See [benchmark result notes](./benchmark/out/results.md)
 
+## Profiling
+
+Build profiling executable, execute it with -cpuprofile flag and get results in profiling.result
+```
+go build -o profiling/profiling profiling/profiling.go
+./profiling/profiling -cpuprofile profiling/out/profiling.result
+```
+
+Generate a graph of profiling results :
+```
+go tool pprof -png -output=profiling/out/profiling1.png main profiling/out/profiling.result
+```
