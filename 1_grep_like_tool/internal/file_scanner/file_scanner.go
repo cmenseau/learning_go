@@ -71,13 +71,7 @@ func (fileScanner FileScanner) GoThroughFiles() {
 			visitor := func(path string, d fs.DirEntry, err error) error {
 
 				if err != nil {
-					currentFileOut := make(chan typedMsg, parallelLinesCollectNb)
-					filesOut <- currentFileOut
-					currentFileOut <- typedMsg{
-						content: err.Error(),
-						isErr:   true,
-					}
-					close(currentFileOut)
+					fileScanner.processError(filesOut, err)
 					return nil
 				}
 				if !d.IsDir() {
@@ -86,7 +80,10 @@ func (fileScanner FileScanner) GoThroughFiles() {
 				return nil
 			}
 
-			filepath.WalkDir(filename, visitor)
+			err := filepath.WalkDir(filename, visitor)
+			if err != nil {
+				fileScanner.processError(filesOut, err)
+			}
 		}
 	}
 	workersWg.Done()
@@ -122,6 +119,16 @@ func (fs FileScanner) processFile(filename string, workersCh chan bool, filesOut
 	workersCh <- true
 	workersWg.Add(1)
 	go fs.processFileConc(filename, currentFileOut, workersCh, workersWg)
+}
+
+func (fs FileScanner) processError(filesOut chan chan typedMsg, err error) {
+	currentFileOut := make(chan typedMsg, parallelLinesCollectNb)
+	filesOut <- currentFileOut
+	currentFileOut <- typedMsg{
+		content: err.Error(),
+		isErr:   true,
+	}
+	close(currentFileOut)
 }
 
 func (fs FileScanner) processFileConc(filename string, currentFileOut chan typedMsg, workersCh <-chan bool, workersWg *sync.WaitGroup) {

@@ -17,8 +17,13 @@ func main() {
 		f, err := os.Create(*cpuprofile)
 		if err != nil {
 			log.Fatal(err)
+			return
 		}
-		pprof.StartCPUProfile(f)
+		err = pprof.StartCPUProfile(f)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
 		defer pprof.StopCPUProfile()
 	}
 
