@@ -6,8 +6,8 @@ type FileOutputRequest struct {
 	CountLines            bool
 	FilesWithoutMatch     bool
 	FilesWithMatch        bool
-	filesWithoutMatchMap  map[string]bool
-	filesWithMatchMap     map[string]bool
+	filesWithoutMatchMap  map[string]bool // set of files without match
+	filesWithMatchMap     map[string]bool // set of files with matches
 	countMatchingLinesMap map[string]int
 }
 
@@ -20,23 +20,22 @@ func (fos FileOutputRequest) SuppressNormalOutput() bool {
 func (fos *FileOutputRequest) ProcessOutputLine(line string, filename string) {
 	// store count or what's required to be able to print final output by file
 
-	if fos.FilesWithoutMatch {
+	switch {
+	case fos.FilesWithoutMatch:
 		if fos.filesWithoutMatchMap == nil {
 			fos.filesWithoutMatchMap = make(map[string]bool)
 		}
 		if line == "" {
 			fos.filesWithoutMatchMap[filename] = true
 		}
-	}
-	if fos.FilesWithMatch {
+	case fos.FilesWithMatch:
 		if fos.filesWithMatchMap == nil {
 			fos.filesWithMatchMap = make(map[string]bool)
 		}
 		if line != "" {
 			fos.filesWithMatchMap[filename] = true
 		}
-	}
-	if fos.CountLines {
+	case fos.CountLines:
 		if fos.countMatchingLinesMap == nil {
 			fos.countMatchingLinesMap = make(map[string]int)
 		}
@@ -47,15 +46,16 @@ func (fos *FileOutputRequest) ProcessOutputLine(line string, filename string) {
 }
 
 func (fos *FileOutputRequest) GetFinalOutputControl(filename string) string {
-	if fos.FilesWithoutMatch {
+	switch {
+	case fos.FilesWithoutMatch:
 		if fos.filesWithoutMatchMap[filename] {
 			return filename
 		}
-	} else if fos.FilesWithMatch {
+	case fos.FilesWithMatch:
 		if fos.filesWithMatchMap[filename] {
 			return filename
 		}
-	} else if fos.CountLines {
+	case fos.CountLines:
 		line_count := fos.countMatchingLinesMap[filename]
 		return fmt.Sprintf("%d", line_count)
 	}
