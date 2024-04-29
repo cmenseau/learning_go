@@ -28,9 +28,9 @@ func NewEngine(req *Request) (Engine, error) {
 
 	if err != nil {
 		return Engine{}, fmt.Errorf("create engine : %w", err)
-	} else {
-		e.LineSelector = ls
 	}
+
+	e.LineSelector = ls
 	return e, nil
 }
 

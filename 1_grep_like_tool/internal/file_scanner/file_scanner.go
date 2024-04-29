@@ -145,28 +145,29 @@ func (fs FileScanner) processFileConc(filename string, currentFileOut chan typed
 			content: err.Error(),
 			isErr:   true,
 		}
-	} else {
-		defer file.Close()
+		return
+	}
 
-		scanner := bufio.NewScanner(file)
+	defer file.Close()
 
-		for scanner.Scan() {
-			line := scanner.Text()
+	scanner := bufio.NewScanner(file)
 
-			if utf8.ValidString(line) {
-				currentFileOut <- typedMsg{
-					content: fs.Finder.OutputOnLine(line, filename),
-					isErr:   false,
-				}
-			} // else {
-			// 	fmt.Fprintln(os.Stderr, "invalid line, not utf-8")
-			// }
+	for scanner.Scan() {
+		line := scanner.Text()
 
-			// TODO : add support of -a option
-		}
-		currentFileOut <- typedMsg{
-			content: fs.Finder.OutputOnWholeFile(filename),
-			isErr:   false,
-		}
+		if utf8.ValidString(line) {
+			currentFileOut <- typedMsg{
+				content: fs.Finder.OutputOnLine(line, filename),
+				isErr:   false,
+			}
+		} // else {
+		// 	fmt.Fprintln(os.Stderr, "invalid line, not utf-8")
+		// }
+
+		// TODO : add support of -a option
+	}
+	currentFileOut <- typedMsg{
+		content: fs.Finder.OutputOnWholeFile(filename),
+		isErr:   false,
 	}
 }
