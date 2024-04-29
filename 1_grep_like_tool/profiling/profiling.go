@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"log"
-	grep_runner "main/internal/runner"
+	"main/internal/runner"
 	"os"
 
 	"runtime/pprof"
@@ -28,6 +28,6 @@ func main() {
 	}
 
 	for range 50 {
-		grep_runner.Run([]string{"-iwr", `defer\|func`, "/home/menseau/Documents/Go/learning_go/0_go_class_matt_holiday"})
+		runner.Run([]string{"-iwr", `defer\|func`, "/home/menseau/Documents/Go/learning_go/0_go_class_matt_holiday"})
 	}
 }

@@ -1,4 +1,4 @@
-package grep_output_control
+package output_control
 
 import (
 	"testing"

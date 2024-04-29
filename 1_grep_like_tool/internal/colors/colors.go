@@ -1,4 +1,4 @@
-package grep_colors
+package colors
 
 import "github.com/fatih/color"
 

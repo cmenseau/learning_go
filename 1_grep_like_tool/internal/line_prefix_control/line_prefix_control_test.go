@@ -1,4 +1,4 @@
-package grep_line_prefix_control
+package line_prefix_control
 
 import "testing"
 

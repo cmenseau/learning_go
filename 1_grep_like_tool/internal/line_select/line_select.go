@@ -1,8 +1,8 @@
-package grep_line_select
+package line_select
 
 import (
 	"fmt"
-	grep_colors "main/internal/colors"
+	"main/internal/colors"
 	"regexp"
 	"strings"
 	"unicode"
@@ -117,7 +117,7 @@ func colorResults(lineToHighlight highlightedLine) string {
 
 	for _, substr := range lineToHighlight.keywordRanges {
 		start, end := substr[0], substr[1]
-		line_output += lineToHighlight.line[prev_end:start] + grep_colors.Color_red(lineToHighlight.line[start:end])
+		line_output += lineToHighlight.line[prev_end:start] + colors.Color_red(lineToHighlight.line[start:end])
 		prev_end = end
 	}
 

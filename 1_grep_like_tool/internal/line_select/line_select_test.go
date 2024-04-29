@@ -1,4 +1,4 @@
-package grep_line_select
+package line_select
 
 import (
 	"fmt"

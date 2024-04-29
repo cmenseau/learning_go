@@ -1,17 +1,17 @@
-package grep_parser
+package parser
 
 import (
 	"errors"
 	"fmt"
-	grep_engine "main/internal/engine"
-	grep_line_select "main/internal/line_select"
+	"main/internal/engine"
+	"main/internal/line_select"
 	"os"
 	"slices"
 	"strings"
 )
 
 // parse args and returns GrepRequest
-func ParseArgs(args []string) (req grep_engine.Request, err error) {
+func ParseArgs(args []string) (req engine.Request, err error) {
 
 	if len(args) < 2 {
 		err = fmt.Errorf("expecting more than 2 args, got %v", os.Args[1:])
@@ -78,10 +78,10 @@ func ParseArgs(args []string) (req grep_engine.Request, err error) {
 
 	// if -x and -w specified, -x takes over
 	if slices.Contains(options, "w") {
-		req.Search.Granularity = grep_line_select.WordGranularity
+		req.Search.Granularity = line_select.WordGranularity
 	}
 	if slices.Contains(options, "x") {
-		req.Search.Granularity = grep_line_select.LineGranularity
+		req.Search.Granularity = line_select.LineGranularity
 	}
 
 	// only one the the 3 option can be used,

@@ -1,7 +1,7 @@
 package benchmark
 
 import (
-	grep_runner "main/internal/runner"
+	"main/internal/runner"
 	"testing"
 )
 
@@ -12,6 +12,6 @@ func BenchmarkRecursive(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		grep_runner.Run(params)
+		runner.Run(params)
 	}
 }

@@ -1,6 +1,6 @@
-package grep_line_prefix_control
+package line_prefix_control
 
-import grep_colors "main/internal/colors"
+import "main/internal/colors"
 
 type LinePrefixRequest struct {
 	WithFilename bool
@@ -8,7 +8,7 @@ type LinePrefixRequest struct {
 
 func (lpr LinePrefixRequest) GetPrefix(filename string) (ret string) {
 	if lpr.WithFilename {
-		ret = grep_colors.Color_magenta(filename) + grep_colors.Color_cyan(":")
+		ret = colors.Color_magenta(filename) + colors.Color_cyan(":")
 	}
 	return
 }

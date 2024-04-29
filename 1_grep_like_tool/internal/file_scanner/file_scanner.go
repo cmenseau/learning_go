@@ -1,4 +1,4 @@
-package grep_file_scanner
+package file_scanner
 
 import (
 	"bufio"
