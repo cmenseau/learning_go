@@ -1,0 +1,116 @@
+@startuml
+namespace engine {
+    class Engine << (S,Aquamarine) >> {
+        + Request *Request
+        + LineSelector line_output.LineSelector
+
+        + OutputOnLine(line string, filename string) string
+        + OutputOnWholeFile(filename string) string
+
+    }
+    class Request << (S,Aquamarine) >> {
+        + Pattern string
+        + Paths []string
+        + Recursive bool
+        + Search line_output.SearchInfo
+        + FileOutput file_output.FileOutputRequest
+        + LinePrefix line_prefix_output.LinePrefixRequest
+
+    }
+}
+
+"file_scanner.Finder" <|-- "engine.Engine"
+
+namespace file_output {
+    class FileOutputRequest << (S,Aquamarine) >> {
+        - filesWithoutMatchMap <font color=blue>map</font>[string]bool
+        - filesWithMatchMap <font color=blue>map</font>[string]bool
+        - countMatchingLinesMap <font color=blue>map</font>[string]int
+
+        + CountLines bool
+        + FilesWithoutMatch bool
+        + FilesWithMatch bool
+
+        + SuppressNormalOutput() bool
+        + ProcessOutputLine(line string, filename string) 
+        + GetFinalOutputControl(filename string) string
+
+    }
+}
+
+
+namespace file_scanner {
+    class FileScanner << (S,Aquamarine) >> {
+        - printOut *io.Writer
+        - printErr *io.Writer
+
+        + Finder Finder
+        + Paths []string
+        + Recursive bool
+
+        - collectOutput(filesOut <font color=blue>chan</font> <font color=blue>chan</font> typedMsg, result <font color=blue>chan</font> bool) 
+        - processFile(filename string, workersCh <font color=blue>chan</font> bool, filesOut <font color=blue>chan</font> <font color=blue>chan</font> typedMsg, workersWg *sync.WaitGroup) 
+        - processError(filesOut <font color=blue>chan</font> <font color=blue>chan</font> typedMsg, err error) 
+        - processFileConc(filename string, currentFileOut <font color=blue>chan</font> typedMsg, workersCh <font color=blue>chan</font> bool, workersWg *sync.WaitGroup) 
+
+        + GoThroughFiles() 
+
+    }
+    interface Finder  {
+        + OutputOnLine(line string, filename string) string
+        + OutputOnWholeFile(filename string) string
+
+    }
+    class typedMsg << (S,Aquamarine) >> {
+        - content string
+        - isErr bool
+
+    }
+}
+
+
+namespace line_output {
+    class LineSelector << (S,Aquamarine) >> {
+        - regexp *regexp.Regexp
+        - regexCaseSensitive *regexp.Regexp
+
+        + Keyword string
+        + Search SearchInfo
+
+        - lineSelectorPipeline(line string) highlightedLine
+        - applyMatchGranularity(line string, indexes [][]int) [][]int
+        - applyCaseSensitiveSelection(line string, indexes [][]int) [][]int
+        - getMatchingPatternIndexes(line string) [][]int
+
+        + GetOutputLine(line string) string
+
+    }
+    class SearchInfo << (S,Aquamarine) >> {
+        + CaseInsensitive bool
+        + InvertMatching bool
+        + Granularity matchGranularity
+        + OnlyMatching bool
+
+    }
+    class highlightedLine << (S,Aquamarine) >> {
+        - line string
+        - keywordRanges [][]int
+
+    }
+    class line_output.matchGranularity << (T, #FF7700) >>  {
+    }
+}
+
+
+namespace line_prefix_output {
+    class LinePrefixRequest << (S,Aquamarine) >> {
+        + WithFilename bool
+
+        + GetPrefix(filename string) string
+
+    }
+}
+
+
+"__builtin__.int" #.. "line_output.matchGranularity"
+@enduml
