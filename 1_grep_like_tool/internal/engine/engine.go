@@ -2,29 +2,29 @@ package engine
 
 import (
 	"fmt"
-	"main/internal/line_prefix_control"
-	"main/internal/line_select"
-	"main/internal/output_control"
+	"main/internal/file_output"
+	"main/internal/line_output"
+	"main/internal/line_prefix_output"
 )
 
 type Request struct {
 	Pattern    string
 	Paths      []string
 	Recursive  bool
-	Search     line_select.SearchInfo
-	FileOutput output_control.FileOutputRequest
-	LinePrefix line_prefix_control.LinePrefixRequest
+	Search     line_output.SearchInfo
+	FileOutput file_output.FileOutputRequest
+	LinePrefix line_prefix_output.LinePrefixRequest
 }
 
 type Engine struct {
 	Request      *Request
-	LineSelector line_select.LineSelector
+	LineSelector line_output.LineSelector
 }
 
 func NewEngine(req *Request) (Engine, error) {
 	var e Engine
 	e.Request = req
-	ls, err := line_select.NewLineSelector(req.Pattern, req.Search)
+	ls, err := line_output.NewLineSelector(req.Pattern, req.Search)
 
 	if err != nil {
 		return Engine{}, fmt.Errorf("create engine : %w", err)

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"main/internal/engine"
-	"main/internal/line_select"
+	"main/internal/line_output"
 	"os"
 	"slices"
 	"strings"
@@ -78,10 +78,10 @@ func ParseArgs(args []string) (req engine.Request, err error) {
 
 	// if -x and -w specified, -x takes over
 	if slices.Contains(options, "w") {
-		req.Search.Granularity = line_select.WordGranularity
+		req.Search.Granularity = line_output.WordGranularity
 	}
 	if slices.Contains(options, "x") {
-		req.Search.Granularity = line_select.LineGranularity
+		req.Search.Granularity = line_output.LineGranularity
 	}
 
 	// only one the the 3 option can be used,

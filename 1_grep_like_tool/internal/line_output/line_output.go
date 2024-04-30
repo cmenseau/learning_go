@@ -1,4 +1,4 @@
-package line_select
+package line_output
 
 import (
 	"fmt"

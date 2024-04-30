@@ -1,9 +1,9 @@
 package engine
 
 import (
-	"main/internal/line_prefix_control"
-	"main/internal/line_select"
-	"main/internal/output_control"
+	"main/internal/file_output"
+	"main/internal/line_output"
+	"main/internal/line_prefix_output"
 	"testing"
 )
 
@@ -17,9 +17,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abcdef",
 			filename: "1.txt",
@@ -28,9 +28,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "def",
 			filename: "1.txt",
@@ -39,9 +39,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{CaseInsensitive: true},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{CaseInsensitive: true},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "aBcdef",
 			filename: "1.txt",
@@ -50,9 +50,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{InvertMatching: true},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{InvertMatching: true},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "def",
 			filename: "1.txt",
@@ -61,9 +61,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{Granularity: line_select.WordGranularity},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{Granularity: line_output.WordGranularity},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abcdef",
 			filename: "1.txt",
@@ -72,9 +72,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{Granularity: line_select.WordGranularity},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{Granularity: line_output.WordGranularity},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abc def",
 			filename: "1.txt",
@@ -83,9 +83,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{Granularity: line_select.LineGranularity},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{Granularity: line_output.LineGranularity},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abcdef",
 			filename: "1.txt",
@@ -94,9 +94,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{Granularity: line_select.LineGranularity},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{Granularity: line_output.LineGranularity},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abc",
 			filename: "1.txt",
@@ -105,9 +105,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{OnlyMatching: true},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{OnlyMatching: true},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abcdef",
 			filename: "1.txt",
@@ -116,9 +116,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{OnlyMatching: true},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{OnlyMatching: true},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "def",
 			filename: "1.txt",
@@ -127,9 +127,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{CountLines: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{CountLines: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abc",
 			filename: "1.txt",
@@ -138,9 +138,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{FilesWithoutMatch: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abc",
 			filename: "1.txt",
@@ -149,9 +149,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{FilesWithMatch: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abc",
 			filename: "1.txt",
@@ -160,9 +160,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{WithFilename: true},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
 			line:     "abcdef",
 			filename: "2.txt",
@@ -171,9 +171,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{CaseInsensitive: true, OnlyMatching: true, Granularity: line_select.WordGranularity},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{WithFilename: true},
+				Search:     line_output.SearchInfo{CaseInsensitive: true, OnlyMatching: true, Granularity: line_output.WordGranularity},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
 			line:     "what aBc def",
 			filename: "file.txt",
@@ -182,9 +182,9 @@ func TestEngineLine(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{OnlyMatching: true},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{OnlyMatching: true},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			line:     "abc xyz abc",
 			filename: "file.txt",
@@ -222,9 +222,9 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "",
@@ -233,9 +233,9 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{CaseInsensitive: true},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{CaseInsensitive: true},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "",
@@ -244,9 +244,9 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{InvertMatching: true},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{InvertMatching: true},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "",
@@ -255,9 +255,9 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{Granularity: line_select.AllGranularity},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{Granularity: line_output.AllGranularity},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "",
@@ -266,9 +266,9 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{Granularity: line_select.WordGranularity},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{Granularity: line_output.WordGranularity},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "",
@@ -277,9 +277,9 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{Granularity: line_select.LineGranularity},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{Granularity: line_output.LineGranularity},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "",
@@ -288,9 +288,9 @@ func TestEngineWholeFile(test *testing.T) {
 			content: []lines{},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{CountLines: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{CountLines: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "0\n",
@@ -304,9 +304,9 @@ func TestEngineWholeFile(test *testing.T) {
 			},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{CountLines: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{WithFilename: true},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{CountLines: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
 			filename: "1.txt",
 			line_out: "1.txt:1\n",
@@ -320,9 +320,9 @@ func TestEngineWholeFile(test *testing.T) {
 			},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{FilesWithoutMatch: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{WithFilename: true},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
 			filename: "1.txt",
 			line_out: "",
@@ -336,9 +336,9 @@ func TestEngineWholeFile(test *testing.T) {
 			},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{FilesWithoutMatch: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "1.txt",
 			line_out: "1.txt\n",
@@ -352,9 +352,9 @@ func TestEngineWholeFile(test *testing.T) {
 			},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{FilesWithMatch: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
 			filename: "whatever.txt",
 			line_out: "whatever.txt\n",
@@ -368,9 +368,9 @@ func TestEngineWholeFile(test *testing.T) {
 			},
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{FilesWithMatch: true},
-				LinePrefix: line_prefix_control.LinePrefixRequest{WithFilename: true},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
+				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
 			filename: "whatever.txt",
 			line_out: "",
@@ -378,9 +378,9 @@ func TestEngineWholeFile(test *testing.T) {
 		{
 			request: Request{
 				Pattern:    "abc",
-				Search:     line_select.SearchInfo{},
-				FileOutput: output_control.FileOutputRequest{},
-				LinePrefix: line_prefix_control.LinePrefixRequest{WithFilename: true},
+				Search:     line_output.SearchInfo{},
+				FileOutput: file_output.FileOutputRequest{},
+				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
 			filename: "whatever.txt",
 			line_out: "", // not "whatever.txt:" because this is prefix on line-level

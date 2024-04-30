@@ -1,4 +1,4 @@
-package output_control
+package file_output
 
 import (
 	"testing"

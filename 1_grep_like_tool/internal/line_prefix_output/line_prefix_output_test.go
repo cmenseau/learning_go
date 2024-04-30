@@ -1,4 +1,4 @@
-package line_prefix_control
+package line_prefix_output
 
 import "testing"
 
