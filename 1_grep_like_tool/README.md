@@ -60,3 +60,6 @@ Generate a graph of profiling results :
 ```
 go tool pprof -png -output=profiling/out/profiling1.png main profiling/out/profiling.result
 ```
+
+Example of graph :
+![](./profiling/out/profiling_graph_20240430.png)
