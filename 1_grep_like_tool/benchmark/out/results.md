@@ -24,7 +24,7 @@ See [out_ccr20240410.txt](out_ccr20240410.txt)
 
 ## Second stop : remove computing of same regex for all lines (13 ms)
 
-By looking through the code, I noticed that I made a programming error. The regex object used behind the scene to find a keyword in a line was computed for each line. This is useless, as the keyword is the same throughout the entire life of line_select : so it made sense to create an object LineSelector, with a regex member (thus caching the regex and re-using it). It made the program faster beyond my expectations.
+By looking through the code, I noticed that I made a programming error. The regex object used behind the scene to find a keyword in a line was computed for each line. This is useless, as the keyword is the same throughout the entire life of line_output : so it made sense to create an object LineSelector, with a regex member (thus caching the regex and re-using it). It made the program faster beyond my expectations.
 
 Also, in this benchmark, I had improved the error handling, by collecting concurrent output streams (found occurences and errors) in the right order.
 
