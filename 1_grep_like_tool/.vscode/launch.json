@@ -13,11 +13,11 @@
             "args": ["-ixv", "Whatever", "txt/basic.txt"]
         },
         {
-            "name": "Launch tests line_select",
+            "name": "Launch tests line_output",
             "type": "go",
             "request": "launch",
             "mode": "test",
-            "program": "internal/line_select"
+            "program": "internal/line_output"
         },
         {
             "name": "Launch tests parser",
