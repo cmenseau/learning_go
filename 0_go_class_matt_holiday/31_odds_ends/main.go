@@ -89,13 +89,19 @@ func iota_test() {
 	)
 }
 
-func var_arg_type() {
+func takes_variadic_args(vals ...any) {
+	fmt.Printf("%T : %+[1]v\n", vals)
+	// cannot use vals (variable of type []any) as []int value in argument to printInts
+	// printInts(vals...)
+}
 
-	var printInts = func(ints ...int) {
-		for idx := range ints {
-			fmt.Println(ints[idx])
-		}
+func printInts(ints ...int) {
+	for idx := range ints {
+		fmt.Println(ints[idx])
 	}
+}
+
+func var_arg_type() {
 
 	printInts()
 	// printInts(nil) // cannot use nil as int value
@@ -103,6 +109,12 @@ func var_arg_type() {
 	printInts([]int{}...)
 	printInts([]int{1, 2, 3}...)
 	printInts(4, 5)
+
+	takes_variadic_args([]int{1, 2, 3})
+	// []interface {} : [[1 2 3]]
+	takes_variadic_args([]any{1, true, 6.0, make(chan bool), make(map[int]int)})
+	// []interface {} : [[1 true 6 0xc000102060 map[]]]
+
 }
 
 func main() {
