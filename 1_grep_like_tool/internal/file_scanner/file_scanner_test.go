@@ -15,6 +15,19 @@ func (e EngineMock) OutputOnWholeFile(filename string) string {
 	return "FILE:" + filename + "\n"
 }
 
+type FileSelectionContainerMock struct {
+	Paths     []string
+	Recursive bool
+}
+
+func (fsc FileSelectionContainerMock) IsRecursive() bool {
+	return fsc.Recursive
+}
+
+func (fsc FileSelectionContainerMock) GetPaths() []string {
+	return fsc.Paths
+}
+
 func TestFileScanner(test *testing.T) {
 
 	var subtests = []struct {
@@ -80,7 +93,7 @@ FILE:./test_material/test2.txt
 	for _, subtest := range subtests {
 
 		var out strings.Builder
-		scanner := NewFileScanner(EngineMock{}, subtest.files, subtest.recursive, &out, &out)
+		scanner := NewFileScanner(EngineMock{}, FileSelectionContainerMock{subtest.files, subtest.recursive}, &out, &out)
 		scanner.GoThroughFiles()
 
 		if out.String() != subtest.line_out {
@@ -179,7 +192,7 @@ func TestErrorHandlingOrder(t *testing.T) {
 		t.Run(subtest.name, func(t *testing.T) {
 
 			var out strings.Builder
-			scanner := NewFileScanner(EngineMock{}, subtest.files, subtest.recursive, &out, &out)
+			scanner := NewFileScanner(EngineMock{}, FileSelectionContainerMock{subtest.files, subtest.recursive}, &out, &out)
 			scanner.GoThroughFiles()
 
 			// check everything (output & errors) is logged in the right order
@@ -195,7 +208,7 @@ func TestErrorHandlingOrder(t *testing.T) {
 			out.Reset()
 
 			var err strings.Builder
-			scanner = NewFileScanner(EngineMock{}, subtest.files, subtest.recursive, &out, &err)
+			scanner = NewFileScanner(EngineMock{}, FileSelectionContainerMock{subtest.files, subtest.recursive}, &out, &err)
 			scanner.GoThroughFiles()
 
 			// check output and error are written on the right place

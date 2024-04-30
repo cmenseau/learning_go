@@ -24,7 +24,7 @@ func Run(args []string) {
 	}
 
 	scanner := file_scanner.NewFileScanner(
-		eng, req.Paths, req.Recursive, os.Stdout, os.Stderr)
+		eng, req, os.Stdout, os.Stderr)
 
 	scanner.GoThroughFiles()
 }

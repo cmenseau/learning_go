@@ -16,8 +16,7 @@ func TestEngineLine(test *testing.T) {
 	}{
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -27,8 +26,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -38,8 +36,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{CaseInsensitive: true},
+				Search:     line_output.SearchInfo{Pattern: "abc", CaseInsensitive: true},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -49,8 +46,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{InvertMatching: true},
+				Search:     line_output.SearchInfo{Pattern: "abc", InvertMatching: true},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -60,8 +56,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{Granularity: line_output.WordGranularity},
+				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.WordGranularity},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -71,8 +66,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{Granularity: line_output.WordGranularity},
+				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.WordGranularity},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -82,8 +76,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{Granularity: line_output.LineGranularity},
+				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.LineGranularity},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -93,8 +86,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{Granularity: line_output.LineGranularity},
+				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.LineGranularity},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -104,8 +96,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{OnlyMatching: true},
+				Search:     line_output.SearchInfo{Pattern: "abc", OnlyMatching: true},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -115,8 +106,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{OnlyMatching: true},
+				Search:     line_output.SearchInfo{Pattern: "abc", OnlyMatching: true},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -126,8 +116,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{CountLines: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -137,8 +126,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -148,8 +136,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -159,8 +146,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
@@ -170,8 +156,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{CaseInsensitive: true, OnlyMatching: true, Granularity: line_output.WordGranularity},
+				Search:     line_output.SearchInfo{Pattern: "abc", CaseInsensitive: true, OnlyMatching: true, Granularity: line_output.WordGranularity},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
@@ -181,8 +166,7 @@ func TestEngineLine(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{OnlyMatching: true},
+				Search:     line_output.SearchInfo{Pattern: "abc", OnlyMatching: true},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -221,8 +205,7 @@ func TestEngineWholeFile(test *testing.T) {
 		{
 			content: []lines{},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -232,8 +215,7 @@ func TestEngineWholeFile(test *testing.T) {
 		{
 			content: []lines{},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{CaseInsensitive: true},
+				Search:     line_output.SearchInfo{Pattern: "abc", CaseInsensitive: true},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -243,8 +225,7 @@ func TestEngineWholeFile(test *testing.T) {
 		{
 			content: []lines{},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{InvertMatching: true},
+				Search:     line_output.SearchInfo{Pattern: "abc", InvertMatching: true},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -254,8 +235,7 @@ func TestEngineWholeFile(test *testing.T) {
 		{
 			content: []lines{},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{Granularity: line_output.AllGranularity},
+				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.AllGranularity},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -265,8 +245,7 @@ func TestEngineWholeFile(test *testing.T) {
 		{
 			content: []lines{},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{Granularity: line_output.WordGranularity},
+				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.WordGranularity},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -276,8 +255,7 @@ func TestEngineWholeFile(test *testing.T) {
 		{
 			content: []lines{},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{Granularity: line_output.LineGranularity},
+				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.LineGranularity},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -287,8 +265,7 @@ func TestEngineWholeFile(test *testing.T) {
 		{
 			content: []lines{},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{CountLines: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -303,8 +280,7 @@ func TestEngineWholeFile(test *testing.T) {
 				},
 			},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{CountLines: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
@@ -319,8 +295,7 @@ func TestEngineWholeFile(test *testing.T) {
 				},
 			},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
@@ -335,8 +310,7 @@ func TestEngineWholeFile(test *testing.T) {
 				},
 			},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -351,8 +325,7 @@ func TestEngineWholeFile(test *testing.T) {
 				},
 			},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{},
 			},
@@ -367,8 +340,7 @@ func TestEngineWholeFile(test *testing.T) {
 				},
 			},
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
 				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},
@@ -377,8 +349,7 @@ func TestEngineWholeFile(test *testing.T) {
 		},
 		{
 			request: Request{
-				Pattern:    "abc",
-				Search:     line_output.SearchInfo{},
+				Search:     line_output.SearchInfo{Pattern: "abc"},
 				FileOutput: file_output.FileOutputRequest{},
 				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
 			},

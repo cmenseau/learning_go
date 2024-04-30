@@ -8,12 +8,19 @@ import (
 )
 
 type Request struct {
-	Pattern    string
 	Paths      []string
 	Recursive  bool
 	Search     line_output.SearchInfo
 	FileOutput file_output.FileOutputRequest
 	LinePrefix line_prefix_output.LinePrefixRequest
+}
+
+func (r Request) IsRecursive() bool {
+	return r.Recursive
+}
+
+func (r Request) GetPaths() []string {
+	return r.Paths
 }
 
 type Engine struct {
@@ -24,7 +31,7 @@ type Engine struct {
 func NewEngine(req *Request) (Engine, error) {
 	var e Engine
 	e.Request = req
-	ls, err := line_output.NewLineSelector(req.Pattern, req.Search)
+	ls, err := line_output.NewLineSelector(req.Search)
 
 	if err != nil {
 		return Engine{}, fmt.Errorf("create engine : %w", err)

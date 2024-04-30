@@ -18,6 +18,7 @@ const (
 )
 
 type SearchInfo struct {
+	Pattern         string
 	CaseInsensitive bool
 	InvertMatching  bool
 	Granularity     matchGranularity
@@ -31,32 +32,30 @@ type highlightedLine struct {
 }
 
 type LineSelector struct {
-	Keyword            string
-	Search             SearchInfo
+	SearchInfo
 	regexp             *regexp.Regexp
 	regexCaseSensitive *regexp.Regexp
 }
 
-func NewLineSelector(keyword string, search SearchInfo) (LineSelector, error) {
+func NewLineSelector(search SearchInfo) (LineSelector, error) {
 	var ls LineSelector
-	ls.Keyword = keyword
-	ls.Search = search
+	ls.SearchInfo = search
 
-	var keyword_escape_removed = turnBreSyntaxInGoSyntax(ls.Keyword)
+	var keyword_escape_removed = turnBreSyntaxInGoSyntax(ls.Pattern)
 	var lower_keyword = strings.ToLower(keyword_escape_removed)
 
 	re, err := regexp.Compile(lower_keyword)
 
 	if err != nil {
-		return LineSelector{}, fmt.Errorf("using given regex (%s) : %w", ls.Keyword, err)
+		return LineSelector{}, fmt.Errorf("using given regex (%s) : %w", ls.Pattern, err)
 	}
 	ls.regexp = re
 
-	if !ls.Search.CaseInsensitive {
+	if !ls.CaseInsensitive {
 		re, err = regexp.Compile(keyword_escape_removed)
 
 		if err != nil {
-			return LineSelector{}, fmt.Errorf("using given regex (%s) : %w", ls.Keyword, err)
+			return LineSelector{}, fmt.Errorf("using given regex (%s) : %w", ls.Pattern, err)
 		}
 		ls.regexCaseSensitive = re
 	}
@@ -73,7 +72,7 @@ func (ls LineSelector) lineSelectorPipeline(line string) (output highlightedLine
 
 	indexes := ls.getMatchingPatternIndexes(line)
 
-	if !ls.Search.CaseInsensitive {
+	if !ls.CaseInsensitive {
 		indexes = ls.applyCaseSensitiveSelection(line, indexes)
 	}
 
@@ -85,13 +84,13 @@ func (ls LineSelector) lineSelectorPipeline(line string) (output highlightedLine
 		output.keywordRanges = indexes
 	}
 
-	if ls.Search.InvertMatching {
+	if ls.InvertMatching {
 		output_line, indexes := applyInvertMatching(line, indexes)
 		output.line = output_line
 		output.keywordRanges = indexes
 	}
 
-	if ls.Search.OnlyMatching {
+	if ls.OnlyMatching {
 		output_line, indexes := applyOnlyMatching(line, indexes)
 		output.line = output_line
 		output.keywordRanges = indexes
@@ -169,15 +168,15 @@ func (ls LineSelector) applyMatchGranularity(
 		return seq_match_indexes
 	}
 
-	switch ls.Search.Granularity {
+	switch ls.Granularity {
 	case AllGranularity:
 		seq_match_indexes = indexes
 	case LineGranularity:
 		// indexes : [0]
 
-		// if keyword is found more than 1 time, it can't be the full line
-		// keyword must match full line (case insensitive)
-		if len(indexes) == 1 && indexes[0][0] == 0 && strings.EqualFold(line, ls.Keyword) {
+		// if Search.Pattern is found more than 1 time, it can't be the full line
+		// Search.Pattern must match full line (case insensitive)
+		if len(indexes) == 1 && indexes[0][0] == 0 && strings.EqualFold(line, ls.Pattern) {
 			seq_match_indexes = append(seq_match_indexes, indexes...)
 		}
 	case WordGranularity:
@@ -219,7 +218,7 @@ func (ls LineSelector) applyMatchGranularity(
 
 func (ls LineSelector) applyCaseSensitiveSelection(line string, indexes [][2]int) (case_sensitive_indexes [][2]int) {
 
-	if ls.Search.CaseInsensitive {
+	if ls.CaseInsensitive {
 		panic("programming error : should be used for case sensitive scenarios only")
 	}
 
@@ -230,7 +229,7 @@ func (ls LineSelector) applyCaseSensitiveSelection(line string, indexes [][2]int
 			case_sensitive_indexes = append(case_sensitive_indexes, idx)
 		}
 
-		//TODO what about cases when keyword contains regular expression using surrounding context
+		//TODO what about cases when Search.Pattern contains regular expression using surrounding context
 	}
 	return case_sensitive_indexes
 }
@@ -245,13 +244,13 @@ func (ls LineSelector) getMatchingPatternIndexes(line string) (indexes [][2]int)
 	return indexes
 }
 
-func turnBreSyntaxInGoSyntax(keyword string) string {
+func turnBreSyntaxInGoSyntax(pattern string) string {
 
 	// replace \| \? \+ \( \) \{ \}
 	// by      |   ?  +  (  )  {  }
 
 	re_escape := regexp.MustCompile(`\\\||\\\?|\\\+|\\\(|\\\)|\\\{|\\\}`)
-	keyword_escape_removed := re_escape.ReplaceAllStringFunc(keyword, func(s string) string {
+	keyword_escape_removed := re_escape.ReplaceAllStringFunc(pattern, func(s string) string {
 		switch s {
 		case `\|`:
 			return `|`

@@ -46,7 +46,7 @@ func ParseArgs(args []string) (req engine.Request, err error) {
 		return
 	}
 
-	req.Pattern = args[pattern_idx]
+	req.Search.Pattern = args[pattern_idx]
 
 	req.Paths = args[first_filename_idx:]
 
