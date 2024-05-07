@@ -14,15 +14,13 @@ type FilePrefixMotor interface {
 }
 
 type Engine struct {
-	request *Request
-	ls      LineSelector
-	flm     FileLevelMotor
-	fpm     FilePrefixMotor
+	ls  LineSelector
+	flm FileLevelMotor
+	fpm FilePrefixMotor
 }
 
-func NewEngine(req *Request, ls LineSelector, flm FileLevelMotor, fpm FilePrefixMotor) (Engine, error) {
+func NewEngine(ls LineSelector, flm FileLevelMotor, fpm FilePrefixMotor) (Engine, error) {
 	var e Engine
-	e.request = req
 	e.ls = ls
 	e.flm = flm
 	e.fpm = fpm

@@ -29,15 +29,14 @@ func Run(args []string) {
 	linePrefixSelector := line_prefix_output.LinePrefixSelector{Lpr: &req.LinePrefix}
 	fileSelector := file_output.FileOutputSelector{Fo: &req.FileOutput}
 
-	eng, err := engine.NewEngine(&req, lineSelector, &fileSelector, linePrefixSelector)
+	eng, err := engine.NewEngine(lineSelector, &fileSelector, linePrefixSelector)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(2)
 	}
 
-	scanner := file_scanner.NewFileScanner(
-		eng, req, os.Stdout, os.Stderr)
+	scanner := file_scanner.NewFileScanner(eng, req, os.Stdout, os.Stderr)
 
 	scanner.GoThroughFiles()
 }
