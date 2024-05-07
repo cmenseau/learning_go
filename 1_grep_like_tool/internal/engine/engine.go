@@ -1,57 +1,42 @@
 package engine
 
-import (
-	"fmt"
-	"main/internal/file_output"
-	"main/internal/line_output"
-	"main/internal/line_prefix_output"
-)
-
-type Request struct {
-	Paths      []string
-	Recursive  bool
-	Search     line_output.SearchInfo
-	FileOutput file_output.FileOutputRequest
-	LinePrefix line_prefix_output.LinePrefixRequest
+type LineSelector interface {
+	GetResult(line string) string
 }
 
-func (r Request) IsRecursive() bool {
-	return r.Recursive
+type FileLevelMotor interface {
+	ProcessLine(selected_line string, filename string) string
+	GetFileLevelResult(filename string) string
 }
 
-func (r Request) GetPaths() []string {
-	return r.Paths
+type FilePrefixMotor interface {
+	GetPrefix(filename string) string
 }
 
 type Engine struct {
-	Request      *Request
-	LineSelector line_output.LineSelector
+	request *Request
+	ls      LineSelector
+	flm     FileLevelMotor
+	fpm     FilePrefixMotor
 }
 
-func NewEngine(req *Request) (Engine, error) {
+func NewEngine(req *Request, ls LineSelector, flm FileLevelMotor, fpm FilePrefixMotor) (Engine, error) {
 	var e Engine
-	e.Request = req
-	ls, err := line_output.NewLineSelector(req.Search)
-
-	if err != nil {
-		return Engine{}, fmt.Errorf("create engine : %w", err)
-	}
-
-	e.LineSelector = ls
+	e.request = req
+	e.ls = ls
+	e.flm = flm
+	e.fpm = fpm
 	return e, nil
 }
 
 func (e Engine) OutputOnLine(line string, filename string) string {
 
-	line_output := e.LineSelector.GetOutputLine(line)
+	line_output := e.ls.GetResult(line)
 
-	if e.Request.FileOutput.SuppressNormalOutput() {
-		e.Request.FileOutput.ProcessOutputLine(line_output, filename)
-		line_output = ""
-	}
+	line_output = e.flm.ProcessLine(line_output, filename)
 
 	if len(line_output) != 0 {
-		prefix := e.Request.LinePrefix.GetPrefix(filename)
+		prefix := e.fpm.GetPrefix(filename)
 
 		line_output = prefix + line_output + "\n"
 	}
@@ -60,10 +45,10 @@ func (e Engine) OutputOnLine(line string, filename string) string {
 
 func (e Engine) OutputOnWholeFile(filename string) string {
 
-	line_output := e.Request.FileOutput.GetFinalOutputControl(filename)
+	line_output := e.flm.GetFileLevelResult(filename)
 
 	if len(line_output) > 0 {
-		prefix := e.Request.LinePrefix.GetPrefix(filename)
+		prefix := e.fpm.GetPrefix(filename)
 
 		line_output = prefix + line_output + "\n"
 	}

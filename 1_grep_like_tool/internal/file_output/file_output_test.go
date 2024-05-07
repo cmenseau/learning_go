@@ -32,7 +32,7 @@ func TestSuppressNormalOutput(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		var out = subtest.ocr.SuppressNormalOutput()
+		var out = FileOutputSelector{Fo: &subtest.ocr}.suppressNormalOutput()
 
 		if out != subtest.exp_out {
 			test.Errorf("wanted %#v (%#v), got %#v",
@@ -188,11 +188,13 @@ func TestGetOutputLine(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
+		var fos = FileOutputSelector{Fo: &subtest.ocr}
+
 		for _, content := range subtest.content {
-			subtest.ocr.ProcessOutputLine(content.line, content.filename)
+			fos.ProcessLine(content.line, content.filename)
 		}
 
-		out := subtest.ocr.GetFinalOutputControl(subtest.filename)
+		out := fos.GetFileLevelResult(subtest.filename)
 
 		if out != subtest.exp_out {
 			test.Errorf("wanted %#v (content %+v, for file %s, req %+v), got %#v",

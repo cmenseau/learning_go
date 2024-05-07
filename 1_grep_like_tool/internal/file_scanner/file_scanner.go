@@ -21,24 +21,24 @@ type Finder interface {
 	OutputOnWholeFile(filename string) string
 }
 
-type FileSelectionContainer interface {
+type ScannableContent interface {
 	IsRecursive() bool
 	GetPaths() []string // can be both file paths or dir paths
 }
 
 type FileScanner struct {
-	Finder                 Finder
-	FileSelectionContainer FileSelectionContainer
-	printOut               *io.Writer
-	printErr               *io.Writer
+	Finder   Finder
+	Content  ScannableContent
+	printOut *io.Writer
+	printErr *io.Writer
 }
 
-func NewFileScanner(finder Finder, fsc FileSelectionContainer,
+func NewFileScanner(finder Finder, sc ScannableContent,
 	print_out io.Writer, print_err io.Writer) FileScanner {
 
 	var fs FileScanner
 	fs.Finder = finder
-	fs.FileSelectionContainer = fsc
+	fs.Content = sc
 	fs.printOut = &print_out
 	fs.printErr = &print_err
 	return fs
@@ -62,14 +62,14 @@ func (fileScanner FileScanner) GoThroughFiles() {
 	// order of the results is important : for each file AND for each line
 	workersWg.Add(1)
 
-	if !fileScanner.FileSelectionContainer.IsRecursive() {
-		for _, filename := range fileScanner.FileSelectionContainer.GetPaths() {
+	if !fileScanner.Content.IsRecursive() {
+		for _, filename := range fileScanner.Content.GetPaths() {
 
 			fileScanner.processFile(filename, workersCh, filesOut, &workersWg)
 		}
 
 	} else {
-		for _, filename := range fileScanner.FileSelectionContainer.GetPaths() {
+		for _, filename := range fileScanner.Content.GetPaths() {
 
 			visitor := func(path string, d fs.DirEntry, err error) error {
 

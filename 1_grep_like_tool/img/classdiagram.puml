@@ -1,25 +1,47 @@
 @startuml
 namespace engine {
     class Engine << (S,Aquamarine) >> {
-        + Request *Request
-        + LineSelector line_output.LineSelector
+        - request *Request
+        - ls LineSelector
+        - flm FileLevelMotor
+        - fpm FilePrefixMotor
 
         + OutputOnLine(line string, filename string) string
         + OutputOnWholeFile(filename string) string
 
     }
+    interface FileLevelMotor  {
+        + ProcessLine(selected_line string, filename string) string
+        + GetFileLevelResult(filename string) string
+
+    }
+    interface FilePrefixMotor  {
+        + GetPrefix(filename string) string
+
+    }
+    interface LineSelector  {
+        + GetResult(line string) string
+
+    }
     class Request << (S,Aquamarine) >> {
-        + Pattern string
         + Paths []string
         + Recursive bool
         + Search line_output.SearchInfo
         + FileOutput file_output.FileOutputRequest
         + LinePrefix line_prefix_output.LinePrefixRequest
 
+        + IsRecursive() bool
+        + GetPaths() []string
+
     }
 }
 
 "file_scanner.Finder" <|-- "engine.Engine"
+"file_scanner.ScannableContent" <|-- "engine.Request"
+
+"engine.Request" o-- "file_output.FileOutputRequest"
+"engine.Request" o-- "line_output.SearchInfo"
+"engine.Request" o-- "line_prefix_output.LinePrefixRequest"
 
 namespace file_output {
     class FileOutputRequest << (S,Aquamarine) >> {
@@ -31,13 +53,21 @@ namespace file_output {
         + FilesWithoutMatch bool
         + FilesWithMatch bool
 
-        + SuppressNormalOutput() bool
-        + ProcessOutputLine(line string, filename string) 
-        + GetFinalOutputControl(filename string) string
+    }
+    class FileOutputSelector << (S,Aquamarine) >> {
+        + Fo *FileOutputRequest
+
+        - suppressNormalOutput() bool
+
+        + ProcessLine(line string, filename string) string
+        + GetFileLevelResult(filename string) string
 
     }
 }
 
+"engine.FileLevelMotor" <|-- "file_output.FileOutputSelector"
+
+"file_output.FileOutputSelector" o-- "file_output.FileOutputRequest"
 
 namespace file_scanner {
     class FileScanner << (S,Aquamarine) >> {
@@ -45,8 +75,7 @@ namespace file_scanner {
         - printErr *io.Writer
 
         + Finder Finder
-        + Paths []string
-        + Recursive bool
+        + Content ScannableContent
 
         - collectOutput(filesOut <font color=blue>chan</font> <font color=blue>chan</font> typedMsg, result <font color=blue>chan</font> bool) 
         - processFile(filename string, workersCh <font color=blue>chan</font> bool, filesOut <font color=blue>chan</font> <font color=blue>chan</font> typedMsg, workersWg *sync.WaitGroup) 
@@ -61,6 +90,11 @@ namespace file_scanner {
         + OutputOnWholeFile(filename string) string
 
     }
+    interface ScannableContent  {
+        + IsRecursive() bool
+        + GetPaths() []string
+
+    }
     class typedMsg << (S,Aquamarine) >> {
         - content string
         - isErr bool
@@ -69,23 +103,24 @@ namespace file_scanner {
 }
 
 
+"file_scanner.FileScanner" o-- "file_scanner.Finder"
+"file_scanner.FileScanner" o-- "file_scanner.ScannableContent"
+
 namespace line_output {
     class LineSelector << (S,Aquamarine) >> {
         - regexp *regexp.Regexp
         - regexCaseSensitive *regexp.Regexp
-
-        + Keyword string
-        + Search SearchInfo
 
         - lineSelectorPipeline(line string) highlightedLine
         - applyMatchGranularity(line string, indexes [][]int) [][]int
         - applyCaseSensitiveSelection(line string, indexes [][]int) [][]int
         - getMatchingPatternIndexes(line string) [][]int
 
-        + GetOutputLine(line string) string
+        + GetResult(line string) string
 
     }
     class SearchInfo << (S,Aquamarine) >> {
+        + Pattern string
         + CaseInsensitive bool
         + InvertMatching bool
         + Granularity matchGranularity
@@ -100,17 +135,28 @@ namespace line_output {
     class line_output.matchGranularity << (T, #FF7700) >>  {
     }
 }
+"line_output.SearchInfo" *-- "line_output.LineSelector"
 
+"engine.LineSelector" <|-- "line_output.LineSelector"
+
+"line_output.SearchInfo" o-- "line_output.matchGranularity"
 
 namespace line_prefix_output {
     class LinePrefixRequest << (S,Aquamarine) >> {
         + WithFilename bool
+
+    }
+    class LinePrefixSelector << (S,Aquamarine) >> {
+        + Lpr *LinePrefixRequest
 
         + GetPrefix(filename string) string
 
     }
 }
 
+"engine.FilePrefixMotor" <|-- "line_prefix_output.LinePrefixSelector"
+
+"line_prefix_output.LinePrefixSelector" o-- "line_prefix_output.LinePrefixRequest"
 
 "__builtin__.int" #.. "line_output.matchGranularity"
 @enduml

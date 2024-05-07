@@ -177,7 +177,18 @@ func TestEngineLine(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		engine, err := NewEngine(&subtest.request)
+
+		lineSelector, err := line_output.NewLineSelector(subtest.request.Search)
+
+		if err != nil {
+			test.Fatal(err.Error())
+		}
+
+		linePrefix := line_prefix_output.LinePrefixSelector{Lpr: &subtest.request.LinePrefix}
+		fileSelector := file_output.FileOutputSelector{Fo: &subtest.request.FileOutput}
+
+		// TODO : use mock of lineSelector, fileSelector, linePrefix
+		engine, err := NewEngine(&subtest.request, lineSelector, &fileSelector, linePrefix)
 
 		var out = engine.OutputOnLine(subtest.line, subtest.filename)
 
@@ -359,7 +370,19 @@ func TestEngineWholeFile(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		engine, err := NewEngine(&subtest.request)
+
+		lineSelector, err := line_output.NewLineSelector(subtest.request.Search)
+
+		if err != nil {
+			test.Fatal(err.Error())
+		}
+
+		linePrefix := line_prefix_output.LinePrefixSelector{Lpr: &subtest.request.LinePrefix}
+
+		fileSelector := file_output.FileOutputSelector{Fo: &subtest.request.FileOutput}
+
+		// TODO : use mock of lineSelector, fileSelector, linePrefix
+		engine, err := NewEngine(&subtest.request, lineSelector, &fileSelector, linePrefix)
 
 		for _, content := range subtest.content {
 			engine.OutputOnLine(content.line, content.filename)

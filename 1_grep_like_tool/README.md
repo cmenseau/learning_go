@@ -63,3 +63,12 @@ go tool pprof -png -output=profiling/out/profiling1.png main profiling/out/profi
 
 Example of graph :
 ![](./profiling/out/profiling_graph_20240430.png)
+
+Generate architecture UML diagrams : 
+```
+goplantuml -recursive -show-aggregations /home/menseau/Documents/Go/learning_go/1_grep_like_tool > classdiagram.puml
+```
+
+```
+godepgraph -s . | dot -Tpng -o depdiagram.png
+```

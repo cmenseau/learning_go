@@ -3,7 +3,10 @@ package runner
 import (
 	"fmt"
 	"main/internal/engine"
+	"main/internal/file_output"
 	"main/internal/file_scanner"
+	"main/internal/line_output"
+	"main/internal/line_prefix_output"
 	"main/internal/parser"
 	"os"
 )
@@ -16,7 +19,17 @@ func Run(args []string) {
 		os.Exit(2)
 	}
 
-	eng, err := engine.NewEngine(&req)
+	lineSelector, err := line_output.NewLineSelector(req.Search)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(2)
+	}
+
+	linePrefixSelector := line_prefix_output.LinePrefixSelector{Lpr: &req.LinePrefix}
+	fileSelector := file_output.FileOutputSelector{Fo: &req.FileOutput}
+
+	eng, err := engine.NewEngine(&req, lineSelector, &fileSelector, linePrefixSelector)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())

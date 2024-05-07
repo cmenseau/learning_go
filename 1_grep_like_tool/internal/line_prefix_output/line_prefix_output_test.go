@@ -26,7 +26,7 @@ func TestGetPrefix(test *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		var out = subtest.lpr.GetPrefix(subtest.filename)
+		var out = LinePrefixSelector{Lpr: &subtest.lpr}.GetPrefix(subtest.filename)
 
 		if out != subtest.exp_out {
 			test.Errorf("wanted %s (filename=%s with request=%+v), got %s",

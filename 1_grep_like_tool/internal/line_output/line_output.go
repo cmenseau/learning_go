@@ -63,7 +63,7 @@ func NewLineSelector(search SearchInfo) (LineSelector, error) {
 	return ls, nil
 }
 
-func (ls LineSelector) GetOutputLine(line string) string {
+func (ls LineSelector) GetResult(line string) string {
 	out_line := ls.lineSelectorPipeline(line)
 	return colorResults(out_line)
 }
