@@ -1,7 +1,6 @@
 @startuml
 namespace engine {
     class Engine << (S,Aquamarine) >> {
-        - request *Request
         - ls LineSelector
         - flm FileLevelMotor
         - fpm FilePrefixMotor
@@ -157,6 +156,30 @@ namespace line_prefix_output {
 "engine.FilePrefixMotor" <|-- "line_prefix_output.LinePrefixSelector"
 
 "line_prefix_output.LinePrefixSelector" o-- "line_prefix_output.LinePrefixRequest"
+
+namespace parser {
+    class InputModel << (S,Aquamarine) >> {
+        + Pattern string
+        + Paths []string
+
+    }
+    class InputOptions << (S,Aquamarine) >> {
+        + Recursive bool
+        + IgnoreCase bool
+        + InvertMatch bool
+        + WordRegexp bool
+        + LineRegexp bool
+        + OnlyMatching bool
+        + Count bool
+        + FilesWithoutMatch bool
+        + FilesWithMatches bool
+        + WithFilename bool
+
+    }
+}
+"parser.InputOptions" *-- "parser.InputModel"
+
+
 
 "__builtin__.int" #.. "line_output.matchGranularity"
 @enduml
