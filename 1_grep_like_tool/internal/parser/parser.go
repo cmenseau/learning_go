@@ -6,9 +6,27 @@ import (
 	"main/internal/engine"
 	"main/internal/line_output"
 	"os"
-	"slices"
 	"strings"
 )
+
+type InputModel struct {
+	Pattern string
+	Paths   []string
+	InputOptions
+}
+
+type InputOptions struct {
+	Recursive         bool // -r
+	IgnoreCase        bool // -i
+	InvertMatch       bool // -v
+	WordRegexp        bool // -w
+	LineRegexp        bool // -x
+	OnlyMatching      bool // -o
+	Count             bool // -c
+	FilesWithoutMatch bool // -L
+	FilesWithMatches  bool // -l
+	WithFilename      bool // -H
+}
 
 // parse args and returns GrepRequest
 func ParseArgs(args []string) (req engine.Request, err error) {
@@ -42,59 +60,98 @@ func ParseArgs(args []string) (req engine.Request, err error) {
 	}
 
 	if !pattern_found || !filename_found {
-		err = errors.New("expecting arguments : [options...] keyword file... ")
+		err = errors.New("expecting arguments : [options...] pattern file... ")
 		return
 	}
 
-	req.Search.Pattern = args[pattern_idx]
+	model := InputModel{}
 
-	req.Paths = args[first_filename_idx:]
+	model.Pattern = args[pattern_idx]
+	model.Paths = args[first_filename_idx:]
 
-	if len(req.Paths) > 1 || slices.Contains(options, "H") {
-		req.LinePrefix.WithFilename = true
-	}
-
-	// -r with only 1 filename : req.LinePrefix.WithFilename => false
-	// -r with 1+ dir : req.LinePrefix.WithFilename => true
-	if slices.Contains(options, "r") {
-		req.Recursive = true
-
-		if fi, err := os.Stat(req.Paths[0]); len(req.Paths) == 1 && err == nil && !fi.IsDir() {
-			req.LinePrefix.WithFilename = false
-		} else {
-			req.LinePrefix.WithFilename = true
+	for _, opt := range options {
+		switch opt {
+		case "i":
+			model.IgnoreCase = true
+		case "w":
+			model.WordRegexp = true
+		case "x":
+			model.LineRegexp = true
+		case "v":
+			model.InvertMatch = true
+		case "r":
+			model.Recursive = true
+		case "o":
+			model.OnlyMatching = true
+		case "c":
+			model.Count = true
+		case "L":
+			model.FilesWithoutMatch = true
+		case "l":
+			model.FilesWithMatches = true
+		case "H":
+			model.WithFilename = true
+		default:
+			err = fmt.Errorf("unsupported option %s", opt)
+			return
 		}
 	}
 
-	if slices.Contains(options, "i") {
-		req.Search.CaseInsensitive = true
-	}
-	if slices.Contains(options, "v") {
-		req.Search.InvertMatching = true
-	}
-	if slices.Contains(options, "o") {
-		req.Search.OnlyMatching = true
+	req = *modelToRequest(model)
+
+	return
+}
+
+func modelToRequest(input InputModel) *engine.Request {
+	r := engine.Request{}
+	r.Paths = input.Paths
+	r.Search.Pattern = input.Pattern
+
+	if len(input.Paths) > 1 || input.WithFilename {
+		r.LinePrefix.WithFilename = true
 	}
 
-	// if -x and -w specified, -x takes over
-	if slices.Contains(options, "w") {
-		req.Search.Granularity = line_output.WordGranularity
+	// -r with only 1 filename : r.LinePrefix.WithFilename => false
+	// -r with 1+ dir : r.LinePrefix.WithFilename => true
+	if input.Recursive {
+		r.Recursive = true
+
+		if fi, err := os.Stat(r.Paths[0]); len(r.Paths) == 1 && err == nil && !fi.IsDir() {
+			r.LinePrefix.WithFilename = false
+		} else {
+			r.LinePrefix.WithFilename = true
+		}
 	}
-	if slices.Contains(options, "x") {
-		req.Search.Granularity = line_output.LineGranularity
+
+	if input.IgnoreCase {
+		r.Search.CaseInsensitive = true
+	}
+	if input.InvertMatch {
+		r.Search.InvertMatching = true
+	}
+	if input.OnlyMatching {
+		r.Search.OnlyMatching = true
+	}
+
+	// if line regexp and word regexp specified, line regexp takes over
+	if input.WordRegexp {
+		r.Search.Granularity = line_output.WordGranularity
+	}
+	if input.LineRegexp {
+		r.Search.Granularity = line_output.LineGranularity
 	}
 
 	// only one the the 3 option can be used,
 	// with priority filesWithout over filesWith over CountLines
-	if slices.Contains(options, "L") {
-		req.FileOutput.FilesWithoutMatch = true
-		req.LinePrefix.WithFilename = false
-	} else if slices.Contains(options, "l") {
-		req.FileOutput.FilesWithMatch = true
-		req.LinePrefix.WithFilename = false
-	} else if slices.Contains(options, "c") {
-		req.FileOutput.CountLines = true
+	if input.FilesWithoutMatch {
+		r.FileOutput.FilesWithoutMatch = true
+		r.LinePrefix.WithFilename = false
+	} else if input.FilesWithMatches {
+		r.FileOutput.FilesWithMatch = true
+		r.LinePrefix.WithFilename = false
+	} else if input.Count {
+		r.FileOutput.CountLines = true
 	}
 
-	return
+	return &r
 }
