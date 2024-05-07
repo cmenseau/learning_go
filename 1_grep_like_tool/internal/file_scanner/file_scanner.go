@@ -83,8 +83,7 @@ func (fileScanner FileScanner) GoThroughFiles() {
 				return nil
 			}
 
-			err := filepath.WalkDir(filename, visitor)
-			if err != nil {
+			if err := filepath.WalkDir(filename, visitor); err != nil {
 				fileScanner.processError(filesOut, err)
 			}
 		}
