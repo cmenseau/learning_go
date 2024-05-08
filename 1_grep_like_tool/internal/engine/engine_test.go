@@ -1,399 +1,164 @@
 package engine
 
 import (
-	"main/internal/file_output"
-	"main/internal/line_output"
-	"main/internal/line_prefix_output"
+	"fmt"
 	"testing"
 )
 
+type LineSelectorMock struct {
+	returnEmpty bool
+}
+
+func (m LineSelectorMock) GetResult(line string) string {
+	if m.returnEmpty {
+		return ""
+	}
+	return "LINE=" + line
+}
+
+type FileLevelMotorMock struct {
+	returnEmpty bool
+}
+
+func (m FileLevelMotorMock) ProcessLine(selected_line string, filename string) string {
+	if m.returnEmpty {
+		return ""
+	}
+	return fmt.Sprintf("PROCESSED=(%s, %s)", selected_line, filename)
+}
+
+func (m FileLevelMotorMock) GetFileLevelResult(filename string) string {
+	if m.returnEmpty {
+		return ""
+	}
+	return "RESULT=" + filename
+}
+
+type FilePrefixMotorMock struct{}
+
+func (m FilePrefixMotorMock) GetPrefix(filename string) string {
+	return fmt.Sprintf("PREFIX=%s;", filename)
+}
+
 func TestEngineLine(test *testing.T) {
 	subtests := []struct {
-		request  Request
 		line     string
 		filename string
 		line_out string
 	}{
 		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
 			line:     "abcdef",
 			filename: "1.txt",
-			line_out: "abcdef\n",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "def",
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", CaseInsensitive: true},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "aBcdef",
-			filename: "1.txt",
-			line_out: "aBcdef\n",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", InvertMatching: true},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "def",
-			filename: "1.txt",
-			line_out: "def\n",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.WordGranularity},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abcdef",
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.WordGranularity},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abc def",
-			filename: "1.txt",
-			line_out: "abc def\n",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.LineGranularity},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abcdef",
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.LineGranularity},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abc",
-			filename: "1.txt",
-			line_out: "abc\n",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", OnlyMatching: true},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abcdef",
-			filename: "1.txt",
-			line_out: "abc\n",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", OnlyMatching: true},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "def",
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{CountLines: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abc",
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abc",
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abc",
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
-			},
-			line:     "abcdef",
-			filename: "2.txt",
-			line_out: "2.txt:abcdef\n",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", CaseInsensitive: true, OnlyMatching: true, Granularity: line_output.WordGranularity},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
-			},
-			line:     "what aBc def",
-			filename: "file.txt",
-			line_out: "file.txt:aBc\n",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", OnlyMatching: true},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			line:     "abc xyz abc",
-			filename: "file.txt",
-			line_out: "abc\nabc\n",
+			line_out: "PREFIX=1.txt;PROCESSED=(LINE=abcdef, 1.txt)\n",
 		},
 	}
 
 	for _, subtest := range subtests {
 
-		lineSelector, err := line_output.NewLineSelector(subtest.request.Search)
+		mockLine := LineSelectorMock{}
+		mockFile := FileLevelMotorMock{}
+		mockPrefix := FilePrefixMotorMock{}
 
-		if err != nil {
-			test.Fatal(err.Error())
-		}
-
-		linePrefix := line_prefix_output.LinePrefixSelector{Lpr: &subtest.request.LinePrefix}
-		fileSelector := file_output.FileOutputSelector{Fo: &subtest.request.FileOutput}
-
-		// TODO : use mock of lineSelector, fileSelector, linePrefix
-		engine, err := NewEngine(lineSelector, &fileSelector, linePrefix)
+		engine, err := NewEngine(mockLine, &mockFile, mockPrefix)
 
 		var out = engine.OutputOnLine(subtest.line, subtest.filename)
 
 		if out != subtest.line_out && err == nil {
-			test.Errorf("wanted %#v (for line=%s filename=%s req=%+v),\ngot %#v",
+			test.Errorf("wanted %#v (for line=%s filename=%s),\ngot %#v",
 				subtest.line_out,
-				subtest.line, subtest.filename, subtest.request,
+				subtest.line, subtest.filename,
+				out)
+		}
+	}
+}
+
+func TestEngineLineEmptyLineNoPrefix(test *testing.T) {
+	subtests := []struct {
+		line     string
+		filename string
+		line_out string
+	}{
+		{
+			line:     "abcdef",
+			filename: "1.txt",
+			line_out: "",
+		},
+	}
+
+	for _, subtest := range subtests {
+
+		mockLine := LineSelectorMock{returnEmpty: true}
+		mockFile := FileLevelMotorMock{returnEmpty: true}
+		mockPrefix := FilePrefixMotorMock{}
+
+		engine, err := NewEngine(mockLine, &mockFile, mockPrefix)
+
+		var out = engine.OutputOnLine(subtest.line, subtest.filename)
+
+		if out != subtest.line_out && err == nil {
+			test.Errorf("wanted %#v (for line=%s filename=%s),\ngot %#v",
+				subtest.line_out,
+				subtest.line, subtest.filename,
 				out)
 		}
 	}
 }
 
 func TestEngineWholeFile(test *testing.T) {
-	type lines struct {
-		line     string
-		filename string
-	}
-
 	subtests := []struct {
-		request  Request
-		content  []lines
 		filename string
 		line_out string
 	}{
 		{
-			content: []lines{},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
 			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			content: []lines{},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", CaseInsensitive: true},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			content: []lines{},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", InvertMatching: true},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			content: []lines{},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.AllGranularity},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			content: []lines{},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.WordGranularity},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			content: []lines{},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc", Granularity: line_output.LineGranularity},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			content: []lines{},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{CountLines: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			filename: "1.txt",
-			line_out: "0\n",
-		},
-		{
-			content: []lines{
-				{
-					line:     "abc",
-					filename: "1.txt",
-				},
-			},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{CountLines: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
-			},
-			filename: "1.txt",
-			line_out: "1.txt:1\n",
-		},
-		{
-			content: []lines{
-				{
-					line:     "abc",
-					filename: "1.txt",
-				},
-			},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
-			},
-			filename: "1.txt",
-			line_out: "",
-		},
-		{
-			content: []lines{
-				{
-					line:     "def",
-					filename: "1.txt",
-				},
-			},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{FilesWithoutMatch: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			filename: "1.txt",
-			line_out: "1.txt\n",
-		},
-		{
-			content: []lines{
-				{
-					line:     "abc",
-					filename: "whatever.txt",
-				},
-			},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{},
-			},
-			filename: "whatever.txt",
-			line_out: "whatever.txt\n",
-		},
-		{
-			content: []lines{
-				{
-					line:     "def",
-					filename: "whatever.txt",
-				},
-			},
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{FilesWithMatch: true},
-				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
-			},
-			filename: "whatever.txt",
-			line_out: "",
-		},
-		{
-			request: Request{
-				Search:     line_output.SearchInfo{Pattern: "abc"},
-				FileOutput: file_output.FileOutputRequest{},
-				LinePrefix: line_prefix_output.LinePrefixRequest{WithFilename: true},
-			},
-			filename: "whatever.txt",
-			line_out: "", // not "whatever.txt:" because this is prefix on line-level
+			line_out: "PREFIX=1.txt;RESULT=1.txt\n",
 		},
 	}
 
 	for _, subtest := range subtests {
 
-		lineSelector, err := line_output.NewLineSelector(subtest.request.Search)
+		mockLine := LineSelectorMock{}
+		mockFile := FileLevelMotorMock{}
+		mockPrefix := FilePrefixMotorMock{}
 
-		if err != nil {
-			test.Fatal(err.Error())
-		}
-
-		linePrefix := line_prefix_output.LinePrefixSelector{Lpr: &subtest.request.LinePrefix}
-
-		fileSelector := file_output.FileOutputSelector{Fo: &subtest.request.FileOutput}
-
-		// TODO : use mock of lineSelector, fileSelector, linePrefix
-		engine, err := NewEngine(lineSelector, &fileSelector, linePrefix)
-
-		for _, content := range subtest.content {
-			engine.OutputOnLine(content.line, content.filename)
-		}
+		engine, err := NewEngine(mockLine, &mockFile, mockPrefix)
 
 		var out = engine.OutputOnWholeFile(subtest.filename)
 
 		if out != subtest.line_out && err == nil {
-			test.Errorf("wanted %#v (for filename=%s req=%+v),\ngot %#v",
+			test.Errorf("wanted %#v (for filename=%s),\ngot %#v",
 				subtest.line_out,
-				subtest.filename, subtest.request,
+				subtest.filename,
+				out)
+		}
+	}
+}
+
+func TestEngineWholeFileEmptyResultNoPrefix(test *testing.T) {
+	subtests := []struct {
+		filename string
+		line_out string
+	}{
+		{
+			filename: "1.txt",
+			line_out: "",
+		},
+	}
+
+	for _, subtest := range subtests {
+
+		mockLine := LineSelectorMock{}
+		mockFile := FileLevelMotorMock{returnEmpty: true}
+		mockPrefix := FilePrefixMotorMock{}
+
+		engine, err := NewEngine(mockLine, &mockFile, mockPrefix)
+
+		var out = engine.OutputOnWholeFile(subtest.filename)
+
+		if out != subtest.line_out && err == nil {
+			test.Errorf("wanted %#v (for filename=%s),\ngot %#v",
+				subtest.line_out,
+				subtest.filename,
 				out)
 		}
 	}

@@ -72,3 +72,9 @@ goplantuml -recursive -show-aggregations /home/menseau/Documents/Go/learning_go/
 ```
 godepgraph -s . | dot -Tpng -o depdiagram.png
 ```
+
+See code coverage 
+```
+go test ./... -coverprofile=c.out -covermode=count
+go tool cover -html=c.out
+```
