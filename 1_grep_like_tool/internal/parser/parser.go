@@ -3,7 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
-	"main/internal/engine"
+	"main/internal/core"
 	"main/internal/line_output"
 	"os"
 	"strings"
@@ -29,7 +29,7 @@ type InputOptions struct {
 }
 
 // parse args and returns GrepRequest
-func ParseArgs(args []string) (req engine.Request, err error) {
+func ParseArgs(args []string) (req core.Request, err error) {
 
 	if len(args) < 2 {
 		err = fmt.Errorf("expecting more than 2 args, got %v", os.Args[1:])
@@ -102,8 +102,8 @@ func ParseArgs(args []string) (req engine.Request, err error) {
 	return
 }
 
-func modelToRequest(input InputModel) *engine.Request {
-	r := engine.Request{}
+func modelToRequest(input InputModel) *core.Request {
+	r := core.Request{}
 	r.Paths = input.Paths
 	r.Search.Pattern = input.Pattern
 

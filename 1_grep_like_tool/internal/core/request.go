@@ -1,4 +1,4 @@
-package engine
+package core
 
 import (
 	"main/internal/file_output"
