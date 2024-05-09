@@ -1,4 +1,24 @@
 @startuml
+namespace core {
+    class Request << (S,Aquamarine) >> {
+        + Paths []string
+        + Recursive bool
+        + Search line_output.SearchInfo
+        + FileOutput file_output.FileOutputRequest
+        + LinePrefix line_prefix_output.LinePrefixRequest
+
+        + IsRecursive() bool
+        + GetPaths() []string
+
+    }
+}
+
+"file_scanner.ScannableContent" <|-- "core.Request"
+
+"core.Request" o-- "file_output.FileOutputRequest"
+"core.Request" o-- "line_output.SearchInfo"
+"core.Request" o-- "line_prefix_output.LinePrefixRequest"
+
 namespace engine {
     class Engine << (S,Aquamarine) >> {
         - ls LineSelector
@@ -22,25 +42,10 @@ namespace engine {
         + GetResult(line string) string
 
     }
-    class Request << (S,Aquamarine) >> {
-        + Paths []string
-        + Recursive bool
-        + Search line_output.SearchInfo
-        + FileOutput file_output.FileOutputRequest
-        + LinePrefix line_prefix_output.LinePrefixRequest
-
-        + IsRecursive() bool
-        + GetPaths() []string
-
-    }
 }
 
 "file_scanner.Finder" <|-- "engine.Engine"
-"file_scanner.ScannableContent" <|-- "engine.Request"
 
-"engine.Request" o-- "file_output.FileOutputRequest"
-"engine.Request" o-- "line_output.SearchInfo"
-"engine.Request" o-- "line_prefix_output.LinePrefixRequest"
 
 namespace file_output {
     class FileOutputRequest << (S,Aquamarine) >> {
