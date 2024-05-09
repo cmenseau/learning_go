@@ -11,6 +11,7 @@ type FileOutputRequest struct {
 	countMatchingLinesMap map[string]int
 }
 
+// implements FileLevelMotor interface
 type FileOutputSelector struct {
 	Fo *FileOutputRequest
 }

@@ -13,6 +13,7 @@ type FilePrefixMotor interface {
 	GetPrefix(filename string) string
 }
 
+// implements Finder interface
 type Engine struct {
 	ls  LineSelector
 	flm FileLevelMotor

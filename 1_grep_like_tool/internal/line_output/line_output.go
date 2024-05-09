@@ -31,6 +31,7 @@ type highlightedLine struct {
 	keywordRanges [][2]int
 }
 
+// implements LineSelector interface
 type LineSelector struct {
 	SearchInfo
 	regexp             *regexp.Regexp

@@ -6,6 +6,7 @@ import (
 	"main/internal/line_prefix_output"
 )
 
+// implements ScannableContent interface
 type Request struct {
 	Paths      []string
 	Recursive  bool

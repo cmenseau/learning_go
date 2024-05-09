@@ -6,6 +6,7 @@ type LinePrefixRequest struct {
 	WithFilename bool
 }
 
+// implements FilePrefixMotor interface
 type LinePrefixSelector struct {
 	Lpr *LinePrefixRequest
 }
