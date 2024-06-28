@@ -175,7 +175,7 @@ func TestUpdateQuality(t *testing.T) {
 		itemsCopy = append(itemsCopy, &gildedrose.Item{item.Name, item.SellIn, item.Quality})
 	}
 
-	gildedrose.UpdateQuality(items)
+	gildedrose.UpdateAllItems(items)
 
 	for idx := range items {
 		if gildedrose.UpdateItem(itemsCopy[idx]); *itemsCopy[idx] != *items[idx] {

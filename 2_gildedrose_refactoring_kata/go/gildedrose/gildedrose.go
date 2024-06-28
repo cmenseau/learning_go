@@ -8,7 +8,7 @@ type Item struct {
 }
 
 func (i Item) String() string {
-	return fmt.Sprint(i.Name, " ", i.SellIn, i.Quality)
+	return fmt.Sprint(i.Name, ", ", i.SellIn, ", ", i.Quality)
 }
 
 const AGED_BRIE string = "Aged Brie"
@@ -16,7 +16,7 @@ const BACKSTAGE_PASS string = "Backstage passes to a TAFKAL80ETC concert"
 const SULFURAS string = "Sulfuras, Hand of Ragnaros"
 const CONJURED string = "Conjured Mana Cake"
 
-func UpdateQuality(items []*Item) {
+func UpdateAllItems(items []*Item) {
 	for i := 0; i < len(items); i++ {
 		UpdateItem(items[i])
 	}
@@ -26,20 +26,31 @@ func isLegendaryItem(name string) bool {
 	return name == SULFURAS
 }
 
-func isMoreValuableWithTime(name string) bool {
-	return name == AGED_BRIE || name == BACKSTAGE_PASS
-}
-
 func hasNoValueAfterSellDate(name string) bool {
 	return name == BACKSTAGE_PASS
 }
 
-func sellDatePassed(sellin int) bool {
-	return sellin < 0
+func beforeSellDate(sellin int) bool {
+	return sellin > -1
 }
 
 func addToQualityBetweenBounds(quality int, add int) int {
 	return max(min(quality+add, 50), 0)
+}
+
+func isMoreValuableWithTime(name string) bool {
+	return name == AGED_BRIE || name == BACKSTAGE_PASS
+}
+
+func getDegradationByDayFor(name string) int {
+	switch {
+	case isMoreValuableWithTime(name):
+		return +1
+	case name == CONJURED:
+		return -2
+	default:
+		return -1
+	}
 }
 
 func updateQuality(item *Item) {
@@ -48,30 +59,27 @@ func updateQuality(item *Item) {
 		return
 	}
 
-	addToQuality := -1
+	var qualityDelta int
 
-	if isMoreValuableWithTime(item.Name) {
-		addToQuality = -addToQuality
-	}
+	if beforeSellDate(item.SellIn) {
+		qualityDelta = getDegradationByDayFor(item.Name)
 
-	if item.Name == BACKSTAGE_PASS {
-		if item.SellIn < 10 && item.Quality < 50 {
-			addToQuality += 1
+		if item.Name == BACKSTAGE_PASS {
+			if item.SellIn < 5 {
+				qualityDelta += 2
+			} else if item.SellIn < 10 {
+				qualityDelta += 1
+			}
 		}
-		if item.SellIn < 5 && item.Quality < 50 {
-			addToQuality += 1
-		}
-	}
-
-	if sellDatePassed(item.SellIn) {
-		addToQuality = 2 * addToQuality
+	} else {
+		qualityDelta = 2 * getDegradationByDayFor(item.Name)
 
 		if hasNoValueAfterSellDate(item.Name) {
-			addToQuality = -item.Quality
+			qualityDelta = -item.Quality
 		}
 	}
 
-	item.Quality = addToQualityBetweenBounds(item.Quality, addToQuality)
+	item.Quality = addToQualityBetweenBounds(item.Quality, qualityDelta)
 }
 
 func UpdateItem(item *Item) {
