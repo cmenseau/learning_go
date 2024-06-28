@@ -23,7 +23,7 @@ func main() {
 		{"Conjured Mana Cake", 3, 6}, // <-- :O
 	}
 
-	days := 2
+	days := 31
 	var err error
 	if len(os.Args) > 1 {
 		days, err = strconv.Atoi(os.Args[1])
@@ -36,7 +36,7 @@ func main() {
 
 	for day := 0; day < days; day++ {
 		fmt.Printf("-------- day %d --------\n", day)
-		fmt.Println("Name, SellIn, Quality")
+		fmt.Println("name, sellIn, quality")
 		for i := 0; i < len(items); i++ {
 			fmt.Println(items[i])
 		}

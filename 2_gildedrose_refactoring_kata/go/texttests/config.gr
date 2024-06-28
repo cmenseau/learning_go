@@ -1,0 +1,11 @@
+full_name:Gilded Rose Refactoring Kata
+
+# set your preferred editor and diff tool.
+view_program:nano
+diff_program:diff
+
+filename_convention_scheme:standard
+
+executable:${TEXTTEST_HOME}/exec
+
+## go build -o exec
