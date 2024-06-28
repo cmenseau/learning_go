@@ -6,19 +6,19 @@ import (
 	"github.com/emilybache/gildedrose-refactoring-kata/gildedrose"
 )
 
-type Subtest struct {
+type SubtestUpdateItem struct {
 	name                string
 	item                gildedrose.Item
 	expectedItemNextDay gildedrose.Item
 }
 
-func (s Subtest) RunSubtest() func(t *testing.T) {
+func (s SubtestUpdateItem) RunSubtest() func(t *testing.T) {
 
 	return func(t *testing.T) {
 
 		originalItem := gildedrose.Item{s.item.Name, s.item.SellIn, s.item.Quality}
 
-		gildedrose.UpdateQuality([]*gildedrose.Item{&s.item})
+		gildedrose.UpdateItem(&s.item)
 
 		if s.expectedItemNextDay != s.item {
 			t.Errorf("For %s: Expected %s but got %s ", originalItem, s.expectedItemNextDay, s.item)
@@ -26,8 +26,8 @@ func (s Subtest) RunSubtest() func(t *testing.T) {
 	}
 }
 
-func TestRegularItems(t *testing.T) {
-	var subtests = []Subtest{
+func TestUpdateItem(t *testing.T) {
+	var subtests = []SubtestUpdateItem{
 		{
 			name:                "Regular item",
 			item:                gildedrose.Item{"Regular", 2, 2},
@@ -157,5 +157,29 @@ func TestRegularItems(t *testing.T) {
 
 	for _, st := range subtests {
 		t.Run(st.name, st.RunSubtest())
+	}
+}
+
+func TestUpdateQuality(t *testing.T) {
+
+	items := []*gildedrose.Item{
+		{"Conjured Mana Cake", 0, 15},
+		{"Aged Brie", 42, 1},
+		{"+5 Dexterity Vest", 10, 20},
+		{"Sulfuras, Hand of Ragnaros", 0, 80},
+		{"Sulfuras, Hand of Ragnaros", -1, 80},
+	}
+
+	itemsCopy := make([]*gildedrose.Item, 0, len(items))
+	for _, item := range items {
+		itemsCopy = append(itemsCopy, &gildedrose.Item{item.Name, item.SellIn, item.Quality})
+	}
+
+	gildedrose.UpdateQuality(items)
+
+	for idx := range items {
+		if gildedrose.UpdateItem(itemsCopy[idx]); *itemsCopy[idx] != *items[idx] {
+			t.Errorf("Expected same value but got %s and %s ", itemsCopy[idx], items[idx])
+		}
 	}
 }
