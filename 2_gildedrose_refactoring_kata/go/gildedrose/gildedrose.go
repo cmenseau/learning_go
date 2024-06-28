@@ -1,8 +1,14 @@
 package gildedrose
 
+import "fmt"
+
 type Item struct {
 	Name            string
 	SellIn, Quality int
+}
+
+func (i Item) String() string {
+	return fmt.Sprint(i.Name, " ", i.SellIn, i.Quality)
 }
 
 func UpdateQuality(items []*Item) {
