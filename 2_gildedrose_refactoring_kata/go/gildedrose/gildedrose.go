@@ -26,8 +26,16 @@ func isMoreValuableWithTime(name string) bool {
 	return name == AGED_BRIE || name == BACKSTAGE_PASS
 }
 
-func hasNoValueAfterSellIn(name string) bool {
+func hasNoValueAfterSellDate(name string) bool {
 	return name == BACKSTAGE_PASS
+}
+
+func sellDatePassed(sellin int) bool {
+	return sellin < 0
+}
+
+func addToQualityBetweenBounds(quality int, add int) int {
+	return max(min(quality+add, 50), 0)
 }
 
 func updateQuality(item *Item) {
@@ -37,7 +45,6 @@ func updateQuality(item *Item) {
 	}
 
 	addToQuality := -1
-	isPastSellIn := item.SellIn < 0
 
 	if isMoreValuableWithTime(item.Name) {
 		addToQuality = -addToQuality
@@ -52,15 +59,15 @@ func updateQuality(item *Item) {
 		}
 	}
 
-	if isPastSellIn {
+	if sellDatePassed(item.SellIn) {
 		addToQuality = 2 * addToQuality
 
-		if hasNoValueAfterSellIn(item.Name) {
+		if hasNoValueAfterSellDate(item.Name) {
 			addToQuality = -item.Quality
 		}
 	}
 
-	item.Quality = max(min(item.Quality+addToQuality, 50), 0)
+	item.Quality = addToQualityBetweenBounds(item.Quality, addToQuality)
 }
 
 func UpdateItem(item *Item) {
