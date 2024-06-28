@@ -22,54 +22,52 @@ func UpdateQuality(items []*Item) {
 	}
 }
 
+func isMoreValuableWithTime(name string) bool {
+	return name == AGED_BRIE || name == BACKSTAGE_PASS
+}
+
+func hasNoValueAfterSellIn(name string) bool {
+	return name == BACKSTAGE_PASS
+}
+
+func updateQuality(item *Item) {
+
+	if item.Name == SULFURAS {
+		return
+	}
+
+	addToQuality := -1
+	isPastSellIn := item.SellIn < 0
+
+	if isMoreValuableWithTime(item.Name) {
+		addToQuality = -addToQuality
+	}
+
+	if item.Name == BACKSTAGE_PASS {
+		if item.SellIn < 10 && item.Quality < 50 {
+			addToQuality += 1
+		}
+		if item.SellIn < 5 && item.Quality < 50 {
+			addToQuality += 1
+		}
+	}
+
+	if isPastSellIn {
+		addToQuality = 2 * addToQuality
+
+		if hasNoValueAfterSellIn(item.Name) {
+			addToQuality = -item.Quality
+		}
+	}
+
+	item.Quality = max(min(item.Quality+addToQuality, 50), 0)
+}
+
 func UpdateItem(item *Item) {
 
 	updateSellInDate(item)
 
-	// handle products decreasing in quality first
-	if item.Name != AGED_BRIE && item.Name != BACKSTAGE_PASS {
-		if item.Quality > 0 {
-			if item.Name != SULFURAS {
-				item.Quality = item.Quality - 1
-			}
-		}
-	} else { // handle special products, increasing in quality
-		if item.Quality < 50 {
-			item.Quality = item.Quality + 1
-			if item.Name == BACKSTAGE_PASS {
-				if item.SellIn < 10 {
-					if item.Quality < 50 {
-						item.Quality = item.Quality + 1
-					}
-				}
-				if item.SellIn < 5 {
-					if item.Quality < 50 {
-						item.Quality = item.Quality + 1
-					}
-				}
-			}
-		}
-	}
-
-	if item.SellIn < 0 {
-		if item.Name != AGED_BRIE {
-			if item.Name != BACKSTAGE_PASS {
-				if item.Quality > 0 {
-					if item.Name != SULFURAS {
-						// normal case : decrease twice as fast
-						item.Quality = item.Quality - 1
-					}
-				}
-				// backstage pass quality is 0 after the concert
-			} else {
-				item.Quality = 0
-			}
-		} else { // aged brie increases twice as fat afer sell by date
-			if item.Quality < 50 {
-				item.Quality = item.Quality + 1
-			}
-		}
-	}
+	updateQuality(item)
 }
 
 func updateSellInDate(item *Item) {
