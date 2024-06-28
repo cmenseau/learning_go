@@ -22,6 +22,10 @@ func UpdateQuality(items []*Item) {
 	}
 }
 
+func isLegendaryItem(name string) bool {
+	return name == SULFURAS
+}
+
 func isMoreValuableWithTime(name string) bool {
 	return name == AGED_BRIE || name == BACKSTAGE_PASS
 }
@@ -40,7 +44,7 @@ func addToQualityBetweenBounds(quality int, add int) int {
 
 func updateQuality(item *Item) {
 
-	if item.Name == SULFURAS {
+	if isLegendaryItem(item.Name) {
 		return
 	}
 
@@ -78,7 +82,9 @@ func UpdateItem(item *Item) {
 }
 
 func updateSellInDate(item *Item) {
-	if item.Name != SULFURAS {
-		item.SellIn = item.SellIn - 1
+	if isLegendaryItem(item.Name) {
+		return
 	}
+
+	item.SellIn = item.SellIn - 1
 }
