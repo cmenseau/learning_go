@@ -35,11 +35,7 @@ func (game *tennisGame2) GetScore() string {
 		}
 	} else {
 
-		var P1res, P2res string = getScore(game.P1point), getScore(game.P2point)
-
-		if P1res != "" && P2res != "" {
-			score = P1res + "-" + P2res
-		}
+		score = getScore(game.P1point) + "-" + getScore(game.P2point)
 
 		if game.P1point > game.P2point && game.P2point >= 3 {
 			score = "Advantage player1"
