@@ -37,9 +37,6 @@ func (game *tennisGame2) GetScore() string {
 
 		var P1res, P2res string = getScore(game.P1point), getScore(game.P2point)
 
-		P1res, P2res = newFunction(game.P1point, game.P2point, P1res, P2res)
-		P2res, P1res = newFunction(game.P2point, game.P1point, P2res, P1res)
-
 		if P1res != "" && P2res != "" {
 			score = P1res + "-" + P2res
 		}
@@ -77,24 +74,6 @@ func getScore(point int) string {
 		return "Forty"
 	}
 	return ""
-}
-
-func newFunction(P2point int, P1point int, P2res string, P1res string) (string, string) {
-	if P2point > P1point && P2point < 4 {
-		if P2point == 2 {
-			P2res = "Thirty"
-		}
-		if P2point == 3 {
-			P2res = "Forty"
-		}
-		if P1point == 1 {
-			P1res = "Fifteen"
-		}
-		if P1point == 2 {
-			P1res = "Thirty"
-		}
-	}
-	return P2res, P1res
 }
 
 func (game *tennisGame2) WonPoint(player string) {
