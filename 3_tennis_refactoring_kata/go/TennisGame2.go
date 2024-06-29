@@ -105,10 +105,10 @@ func (game *tennisGame2) GetScore() string {
 			score = "Advantage player2"
 		}
 
-		if game.P1point >= 4 && game.P2point >= 0 && (game.P1point-game.P2point) >= 2 {
+		if game.P1point >= 4 && (game.P1point-game.P2point) >= 2 {
 			score = "Win for player1"
 		}
-		if game.P2point >= 4 && game.P1point >= 0 && (game.P2point-game.P1point) >= 2 {
+		if game.P2point >= 4 && (game.P2point-game.P1point) >= 2 {
 			score = "Win for player2"
 		}
 	}
