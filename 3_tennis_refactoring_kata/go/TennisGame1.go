@@ -48,21 +48,21 @@ func (game *tennisGame1) GetScore() string {
 			score = "Win for " + game.player2Name
 		}
 	} else {
-		score = getScoreName(game.m_score1, score) + "-" + getScoreName(game.m_score2, score)
+		score = getScoreName(game.m_score1) + "-" + getScoreName(game.m_score2)
 	}
 	return score
 }
 
-func getScoreName(tempScore int, score string) string {
+func getScoreName(tempScore int) string {
 	switch tempScore {
 	case 0:
-		score += "Love"
+		return "Love"
 	case 1:
-		score += "Fifteen"
+		return "Fifteen"
 	case 2:
-		score += "Thirty"
+		return "Thirty"
 	case 3:
-		score += "Forty"
+		return "Forty"
 	}
-	return score
+	return ""
 }
