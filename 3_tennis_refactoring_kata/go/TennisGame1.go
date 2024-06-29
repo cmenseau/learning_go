@@ -26,13 +26,14 @@ func (game *tennisGame1) WonPoint(playerName string) {
 func (game *tennisGame1) GetScore() string {
 	score := ""
 	if game.m_score1 == game.m_score2 {
-		switch {
-		case game.m_score1 < 3:
+		if game.m_score1 < 3 {
 			score = getScoreName(game.m_score1) + "-All"
-		default:
+		} else {
 			score = "Deuce"
 		}
-	} else if game.m_score1 >= 4 || game.m_score2 >= 4 {
+	} else if game.m_score1 < 4 && game.m_score2 < 4 {
+		score = getScoreName(game.m_score1) + "-" + getScoreName(game.m_score2)
+	} else {
 		minusResult := game.m_score1 - game.m_score2
 		if minusResult == 1 {
 			score = "Advantage " + game.player1Name
@@ -43,8 +44,6 @@ func (game *tennisGame1) GetScore() string {
 		} else {
 			score = "Win for " + game.player2Name
 		}
-	} else {
-		score = getScoreName(game.m_score1) + "-" + getScoreName(game.m_score2)
 	}
 	return score
 }
