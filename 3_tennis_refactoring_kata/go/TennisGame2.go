@@ -1,32 +1,39 @@
 package tenniskata
 
 type tennisGame2 struct {
-	P1point int
-	P2point int
+	player1 Player
+	player2 Player
+}
 
-	player1Name string
-	player2Name string
+type Player struct {
+	point int
+	name  string
+}
+
+func NewPlayer(name string) Player {
+	return Player{name: name, point: 0}
 }
 
 func TennisGame2(player1Name string, player2Name string) TennisGame {
 	game := &tennisGame2{
-		player1Name: player1Name,
-		player2Name: player2Name}
+		player1: NewPlayer(player1Name),
+		player2: NewPlayer(player2Name),
+	}
 
 	return game
 }
 
 func (game *tennisGame2) GetScore() string {
 	score := ""
-	if game.P1point == game.P2point {
-		if game.P1point < 3 {
-			if game.P1point == 0 {
+	if game.player1.point == game.player2.point {
+		if game.player1.point < 3 {
+			if game.player1.point == 0 {
 				score = "Love"
 			}
-			if game.P1point == 1 {
+			if game.player1.point == 1 {
 				score = "Fifteen"
 			}
-			if game.P1point == 2 {
+			if game.player1.point == 2 {
 				score = "Thirty"
 			}
 			score += "-All"
@@ -35,21 +42,21 @@ func (game *tennisGame2) GetScore() string {
 		}
 	} else {
 
-		score = getScore(game.P1point) + "-" + getScore(game.P2point)
+		score = getScore(game.player1.point) + "-" + getScore(game.player2.point)
 
-		if game.P1point > game.P2point && game.P2point >= 3 {
-			score = "Advantage player1"
+		if game.player1.point > game.player2.point && game.player2.point >= 3 {
+			score = "Advantage " + game.player1.name
 		}
 
-		if game.P2point > game.P1point && game.P1point >= 3 {
-			score = "Advantage player2"
+		if game.player2.point > game.player1.point && game.player1.point >= 3 {
+			score = "Advantage " + game.player2.name
 		}
 
-		if game.P1point >= 4 && (game.P1point-game.P2point) >= 2 {
-			score = "Win for player1"
+		if game.player1.point >= 4 && (game.player1.point-game.player2.point) >= 2 {
+			score = "Win for " + game.player1.name
 		}
-		if game.P2point >= 4 && (game.P2point-game.P1point) >= 2 {
-			score = "Win for player2"
+		if game.player2.point >= 4 && (game.player2.point-game.player1.point) >= 2 {
+			score = "Win for " + game.player2.name
 		}
 	}
 
@@ -73,9 +80,9 @@ func getScore(point int) string {
 }
 
 func (game *tennisGame2) WonPoint(player string) {
-	if player == "player1" {
-		game.P1point++
+	if player == game.player1.name {
+		game.player1.point++
 	} else {
-		game.P2point++
+		game.player2.point++
 	}
 }
