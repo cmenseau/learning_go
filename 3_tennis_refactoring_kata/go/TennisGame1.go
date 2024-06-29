@@ -26,13 +26,9 @@ func (game *tennisGame1) WonPoint(playerName string) {
 func (game *tennisGame1) GetScore() string {
 	score := ""
 	if game.m_score1 == game.m_score2 {
-		switch game.m_score1 {
-		case 0:
-			score = "Love-All"
-		case 1:
-			score = "Fifteen-All"
-		case 2:
-			score = "Thirty-All"
+		switch {
+		case game.m_score1 < 3:
+			score = getScoreName(game.m_score1) + "-All"
 		default:
 			score = "Deuce"
 		}
