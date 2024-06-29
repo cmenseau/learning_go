@@ -147,6 +147,10 @@ func TestTennisGame2(t *testing.T) {
 	runSuiteOnGame(t, func(player1Name string, player2Name string) TennisGame { return TennisGame2(player1Name, player2Name) })
 }
 
+func TestTennisGame2WithPlayerNames(t *testing.T) {
+	runSuiteOnGameWithPlayerNames(t, func(player1Name string, player2Name string) TennisGame { return TennisGame2(player1Name, player2Name) })
+}
+
 func TestTennisGame3(t *testing.T) {
 	runSuiteOnGame(t, func(player1Name string, player2Name string) TennisGame { return TennisGame3(player1Name, player2Name) })
 }
