@@ -37,14 +37,14 @@ func (game *tennisGame2) GetScore() string {
 		} else {
 			score = "Win for " + game.player2.name
 		}
-	} else {
-		score = game.player1.getScore() + "-" + game.player2.getScore()
-
+	} else if game.isAvantaging() {
 		if game.player1.hasAvantageAgain(game.player2) {
 			score = "Advantage " + game.player1.name
-		} else if game.player2.hasAvantageAgain(game.player1) {
+		} else {
 			score = "Advantage " + game.player2.name
 		}
+	} else {
+		score = game.player1.getScore() + "-" + game.player2.getScore()
 	}
 
 	return score
@@ -52,6 +52,10 @@ func (game *tennisGame2) GetScore() string {
 
 func (game *tennisGame2) isDone() bool {
 	return game.player2.hasWonAgain(game.player1) || game.player1.hasWonAgain(game.player2)
+}
+
+func (game *tennisGame2) isAvantaging() bool {
+	return game.player2.hasAvantageAgain(game.player1) || game.player1.hasAvantageAgain(game.player2)
 }
 
 func (p Player) getScore() string {
