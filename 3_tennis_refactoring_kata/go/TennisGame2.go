@@ -4,8 +4,6 @@ type tennisGame2 struct {
 	P1point int
 	P2point int
 
-	P1res       string
-	P2res       string
 	player1Name string
 	player2Name string
 }
@@ -37,64 +35,67 @@ func (game *tennisGame2) GetScore() string {
 		}
 	}
 
+	var P1res string
+	var P2res string
+
 	if game.P1point > 0 && game.P2point == 0 {
 		if game.P1point == 1 {
-			game.P1res = "Fifteen"
+			P1res = "Fifteen"
 		}
 		if game.P1point == 2 {
-			game.P1res = "Thirty"
+			P1res = "Thirty"
 		}
 		if game.P1point == 3 {
-			game.P1res = "Forty"
+			P1res = "Forty"
 		}
 
-		game.P2res = "Love"
-		score = game.P1res + "-" + game.P2res
+		P2res = "Love"
+		score = P1res + "-" + P2res
 	}
 	if game.P2point > 0 && game.P1point == 0 {
 		if game.P2point == 1 {
-			game.P2res = "Fifteen"
+			P2res = "Fifteen"
 		}
 		if game.P2point == 2 {
-			game.P2res = "Thirty"
+			P2res = "Thirty"
 		}
 		if game.P2point == 3 {
-			game.P2res = "Forty"
+			P2res = "Forty"
 		}
 
-		game.P1res = "Love"
-		score = game.P1res + "-" + game.P2res
+		P1res = "Love"
+		score = P1res + "-" + P2res
 	}
 
 	if game.P1point > game.P2point && game.P1point < 4 {
 		if game.P1point == 2 {
-			game.P1res = "Thirty"
+			P1res = "Thirty"
 		}
 		if game.P1point == 3 {
-			game.P1res = "Forty"
+			P1res = "Forty"
 		}
 		if game.P2point == 1 {
-			game.P2res = "Fifteen"
+			P2res = "Fifteen"
 		}
 		if game.P2point == 2 {
-			game.P2res = "Thirty"
+			P2res = "Thirty"
 		}
-		score = game.P1res + "-" + game.P2res
+		score = P1res + "-" + P2res
 	}
 	if game.P2point > game.P1point && game.P2point < 4 {
 		if game.P2point == 2 {
-			game.P2res = "Thirty"
+			P2res = "Thirty"
 		}
 		if game.P2point == 3 {
-			game.P2res = "Forty"
+			P2res = "Forty"
 		}
 		if game.P1point == 1 {
-			game.P1res = "Fifteen"
+			P1res = "Fifteen"
 		}
 		if game.P1point == 2 {
-			game.P1res = "Thirty"
+			P1res = "Thirty"
 		}
-		score = game.P1res + "-" + game.P2res
+		score = P1res + "-" + P2res
 	}
 
 	if game.P1point > game.P2point && game.P2point >= 3 {
