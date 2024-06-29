@@ -35,64 +35,11 @@ func (game *tennisGame2) GetScore() string {
 		}
 	} else {
 
-		var P1res string
-		var P2res string
+		var P1res, P2res string = getScore(game.P1point), getScore(game.P2point)
 
-		if game.P1point > 0 && game.P2point == 0 {
-			if game.P1point == 1 {
-				P1res = "Fifteen"
-			}
-			if game.P1point == 2 {
-				P1res = "Thirty"
-			}
-			if game.P1point == 3 {
-				P1res = "Forty"
-			}
+		P1res, P2res = newFunction(game.P1point, game.P2point, P1res, P2res)
+		P2res, P1res = newFunction(game.P2point, game.P1point, P2res, P1res)
 
-			P2res = "Love"
-		}
-		if game.P2point > 0 && game.P1point == 0 {
-			if game.P2point == 1 {
-				P2res = "Fifteen"
-			}
-			if game.P2point == 2 {
-				P2res = "Thirty"
-			}
-			if game.P2point == 3 {
-				P2res = "Forty"
-			}
-
-			P1res = "Love"
-		}
-
-		if game.P1point > game.P2point && game.P1point < 4 {
-			if game.P1point == 2 {
-				P1res = "Thirty"
-			}
-			if game.P1point == 3 {
-				P1res = "Forty"
-			}
-			if game.P2point == 1 {
-				P2res = "Fifteen"
-			}
-			if game.P2point == 2 {
-				P2res = "Thirty"
-			}
-		}
-		if game.P2point > game.P1point && game.P2point < 4 {
-			if game.P2point == 2 {
-				P2res = "Thirty"
-			}
-			if game.P2point == 3 {
-				P2res = "Forty"
-			}
-			if game.P1point == 1 {
-				P1res = "Fifteen"
-			}
-			if game.P1point == 2 {
-				P1res = "Thirty"
-			}
-		}
 		if P1res != "" && P2res != "" {
 			score = P1res + "-" + P2res
 		}
@@ -114,6 +61,40 @@ func (game *tennisGame2) GetScore() string {
 	}
 
 	return score
+}
+
+func getScore(point int) string {
+	if point == 0 {
+		return "Love"
+	}
+	if point == 1 {
+		return "Fifteen"
+	}
+	if point == 2 {
+		return "Thirty"
+	}
+	if point == 3 {
+		return "Forty"
+	}
+	return ""
+}
+
+func newFunction(P2point int, P1point int, P2res string, P1res string) (string, string) {
+	if P2point > P1point && P2point < 4 {
+		if P2point == 2 {
+			P2res = "Thirty"
+		}
+		if P2point == 3 {
+			P2res = "Forty"
+		}
+		if P1point == 1 {
+			P1res = "Fifteen"
+		}
+		if P1point == 2 {
+			P1res = "Thirty"
+		}
+	}
+	return P2res, P1res
 }
 
 func (game *tennisGame2) WonPoint(player string) {
