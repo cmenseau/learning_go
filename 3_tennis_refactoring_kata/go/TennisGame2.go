@@ -20,20 +20,21 @@ func TennisGame2(player1Name string, player2Name string) TennisGame {
 
 func (game *tennisGame2) GetScore() string {
 	score := ""
-	if game.P1point == game.P2point && game.P1point < 4 {
-		if game.P1point == 0 {
-			score = "Love"
+	if game.P1point == game.P2point {
+		if game.P1point < 3 {
+			if game.P1point == 0 {
+				score = "Love"
+			}
+			if game.P1point == 1 {
+				score = "Fifteen"
+			}
+			if game.P1point == 2 {
+				score = "Thirty"
+			}
+			score += "-All"
+		} else {
+			score = "Deuce"
 		}
-		if game.P1point == 1 {
-			score = "Fifteen"
-		}
-		if game.P1point == 2 {
-			score = "Thirty"
-		}
-		score += "-All"
-	}
-	if game.P1point == game.P2point && game.P1point >= 3 {
-		score = "Deuce"
 	}
 
 	if game.P1point > 0 && game.P2point == 0 {
