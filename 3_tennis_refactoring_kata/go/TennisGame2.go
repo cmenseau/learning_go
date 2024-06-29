@@ -50,7 +50,6 @@ func (game *tennisGame2) GetScore() string {
 		}
 
 		P2res = "Love"
-		score = P1res + "-" + P2res
 	}
 	if game.P2point > 0 && game.P1point == 0 {
 		if game.P2point == 1 {
@@ -64,7 +63,6 @@ func (game *tennisGame2) GetScore() string {
 		}
 
 		P1res = "Love"
-		score = P1res + "-" + P2res
 	}
 
 	if game.P1point > game.P2point && game.P1point < 4 {
@@ -80,7 +78,6 @@ func (game *tennisGame2) GetScore() string {
 		if game.P2point == 2 {
 			P2res = "Thirty"
 		}
-		score = P1res + "-" + P2res
 	}
 	if game.P2point > game.P1point && game.P2point < 4 {
 		if game.P2point == 2 {
@@ -95,6 +92,8 @@ func (game *tennisGame2) GetScore() string {
 		if game.P1point == 2 {
 			P1res = "Thirty"
 		}
+	}
+	if P1res != "" && P2res != "" {
 		score = P1res + "-" + P2res
 	}
 
