@@ -5,6 +5,8 @@ import (
 )
 
 var session *UserSession
+var dao_err = errors.New("TripDAO should not be invoked on an unit test.")
+var userSession_err = errors.New("UserSession.GetLoggedUser() should not be called in an unit test")
 
 type Trip struct {
 }
@@ -44,7 +46,8 @@ type UserSession struct {
 }
 
 func (userSession *UserSession) GetLoggedUser() (*User, error) {
-	return nil, errors.New("UserSession.GetLoggedUser() should not be called in an unit test")
+	return nil, userSession_err
+}
 }
 
 type User struct {
@@ -59,5 +62,5 @@ type Dao struct {
 }
 
 func (dao *Dao) FindTripByUser(user *User) ([]Trip, error) {
-	return nil, errors.New("TripDAO should not be invoked on an unit test.")
+	return nil, dao_err
 }
