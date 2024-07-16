@@ -13,27 +13,32 @@ type Trip struct {
 }
 
 type Service struct {
-	tripDAO DaoTripFinder
+	tripFinder DaoTripFinder
 }
 
 func (service *Service) GetTripByUser(user Extrovert) ([]Trip, error) {
-	var trips []Trip
+	loggedUser, err := service.GetCurrentLoggedUser()
 
+	if err == nil {
+		if loggedUser.IsFriendWith(user) {
+			return service.tripFinder.FindTripByUser(user)
+		}
+	}
+	return nil, err
+}
+
+func (service *Service) GetCurrentLoggedUser() (*User, error) {
 	loggedUser, err := loggedUserGetter.GetLoggedUser()
 
 	if err != nil {
-		return trips, err
+		return nil, err
 	}
 
 	if loggedUser == nil {
-		return trips, errNotLoggedUser
+		return nil, errNotLoggedUser
 	}
 
-	if loggedUser.IsFriendWith(user) {
-		return service.tripDAO.FindTripByUser(user)
-	}
-
-	return trips, err
+	return loggedUser, nil
 }
 
 type LoggedUserGetter interface {
@@ -60,15 +65,13 @@ func (user *User) GetFriends() ([]User, error) {
 }
 
 func (user *User) IsFriendWith(extrovert Extrovert) bool {
-	friends, err := extrovert.GetFriends()
 
-	if err != nil {
-		return false
-	}
+	if friends, err := extrovert.GetFriends(); err == nil {
 
-	for _, friend := range friends {
-		if *user == friend {
-			return true
+		for _, friend := range friends {
+			if *user == friend {
+				return true
+			}
 		}
 	}
 	return false

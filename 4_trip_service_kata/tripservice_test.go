@@ -56,7 +56,7 @@ func (mu MockUser) GetFriends() ([]User, error) {
 
 func TestFriendsError(test *testing.T) {
 
-	var svc Service = Service{tripDAO: &Dao{}}
+	var svc Service = Service{tripFinder: &Dao{}}
 	var mu MockUser = MockUser{
 		getFriends: func() ([]User, error) {
 			return nil, errors.New("Some error")
@@ -88,7 +88,7 @@ func TestNoLoggedUser(test *testing.T) {
 	}
 
 	var svc = &Service{
-		tripDAO: &Dao{},
+		tripFinder: &Dao{},
 	}
 
 	var user User
@@ -110,7 +110,7 @@ func TestLoggedUser(test *testing.T) {
 	}
 
 	var svc = &Service{
-		tripDAO: &Dao{},
+		tripFinder: &Dao{},
 	}
 
 	var user User
@@ -134,7 +134,7 @@ func TestLoggedUserError(test *testing.T) {
 	}
 
 	var svc = &Service{
-		tripDAO: &Dao{},
+		tripFinder: &Dao{},
 	}
 
 	var user User
@@ -162,7 +162,7 @@ func TestGetTripOfStranger(test *testing.T) {
 	}
 
 	var svc = &Service{
-		tripDAO: &Dao{},
+		tripFinder: &Dao{},
 	}
 
 	trips, err := svc.GetTripByUser(mu)
@@ -203,7 +203,7 @@ func TestGetTripOfFriend(test *testing.T) {
 	}
 
 	var svc = &Service{
-		tripDAO: &mockDao,
+		tripFinder: &mockDao,
 	}
 
 	trips, err := svc.GetTripByUser(mu)
