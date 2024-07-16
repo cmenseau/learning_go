@@ -10,7 +10,7 @@ func TestEmptyUser(test *testing.T) {
 
 	var user User
 
-	var friends, err = user.Friends()
+	var friends, err = user.GetFriends()
 
 	if friends != nil || err != nil {
 		test.Errorf("expected friends, err to be (%v, %v) got (%v, %v)", nil, nil, friends, err)
@@ -47,19 +47,19 @@ func TestUserSession(test *testing.T) {
 }
 
 type MockUser struct {
-	friends func() ([]User, error) // set it to control behavior
+	getFriends func() ([]User, error) // set it to control behavior
 }
 
 // implement Friender
-func (mu MockUser) Friends() ([]User, error) {
-	return mu.friends()
+func (mu MockUser) GetFriends() ([]User, error) {
+	return mu.getFriends()
 }
 
 func TestFriendsError(test *testing.T) {
 
 	var svc Service = Service{tripDAO: &Dao{}}
 	var mu MockUser = MockUser{
-		friends: func() ([]User, error) {
+		getFriends: func() ([]User, error) {
 			return nil, errors.New("Some error")
 		},
 	}
@@ -151,7 +151,7 @@ func TestLoggedUserError(test *testing.T) {
 func TestGetTripOfStranger(test *testing.T) {
 
 	var mu MockUser = MockUser{
-		friends: func() ([]User, error) {
+		getFriends: func() ([]User, error) {
 			return []User{User{}}, nil
 		},
 	}
@@ -178,7 +178,7 @@ type MockDao struct {
 	findTrip func() ([]Trip, error) // set it to control behavior
 }
 
-func (dao *MockDao) FindTripByUser(user Friender) ([]Trip, error) {
+func (dao *MockDao) FindTripByUser(user Extrovert) ([]Trip, error) {
 	return dao.findTrip()
 }
 
@@ -187,7 +187,7 @@ func TestGetTripOfFriend(test *testing.T) {
 	var friend User = User{}
 
 	var mu MockUser = MockUser{
-		friends: func() ([]User, error) {
+		getFriends: func() ([]User, error) {
 			return []User{User{}, friend}, nil
 		},
 	}
