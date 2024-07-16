@@ -1,13 +1,13 @@
 package trip
 
 import (
-	"github.com/pkg/errors"
+	"errors"
 )
 
 var loggedUserGetter LoggedUserGetter = &UserSession{}
-var dao_err = errors.New("TripDAO should not be invoked on an unit test.")
-var userSession_err = errors.New("UserSession.GetLoggedUser() should not be called in an unit test")
-var notLoggedUser_err = errors.New("user not logged in")
+var errDao = errors.New("TripDAO should not be invoked on an unit test")
+var errUserSession = errors.New("UserSession.GetLoggedUser() should not be called in an unit test")
+var errNotLoggedUser = errors.New("user not logged in")
 
 type Trip struct {
 }
@@ -26,7 +26,7 @@ func (service *Service) GetTripByUser(user Extrovert) ([]Trip, error) {
 	}
 
 	if loggedUser == nil {
-		return trips, notLoggedUser_err
+		return trips, errNotLoggedUser
 	}
 
 	if loggedUser.IsFriendWith(user) {
@@ -44,7 +44,7 @@ type UserSession struct {
 }
 
 func (userSession *UserSession) GetLoggedUser() (*User, error) {
-	return nil, userSession_err
+	return nil, errUserSession
 }
 
 type Extrovert interface {
@@ -82,5 +82,5 @@ type Dao struct {
 }
 
 func (dao *Dao) FindTripByUser(user Extrovert) ([]Trip, error) {
-	return nil, dao_err
+	return nil, errDao
 }

@@ -1,9 +1,8 @@
 package trip
 
 import (
+	"errors"
 	"testing"
-
-	"github.com/pkg/errors"
 )
 
 func TestEmptyUser(test *testing.T) {
@@ -24,7 +23,7 @@ func TestDao(test *testing.T) {
 
 	var trips, err = dao.FindTripByUser(user)
 
-	expected_err := dao_err
+	expected_err := errDao
 
 	if trips != nil || !errors.Is(err, expected_err) {
 		test.Errorf("expected friends, err to be (%v, %v) got (%v, %v)",
@@ -38,7 +37,7 @@ func TestUserSession(test *testing.T) {
 
 	var user, err = userSession.GetLoggedUser()
 
-	expected_err := userSession_err
+	expected_err := errUserSession
 
 	if user != nil || !errors.Is(err, expected_err) {
 		test.Errorf("expected friends, err to be (%v, %v) got (%v, %v)",
@@ -96,9 +95,9 @@ func TestNoLoggedUser(test *testing.T) {
 
 	trips, err := svc.GetTripByUser(&user)
 
-	if trips != nil || err != notLoggedUser_err {
+	if trips != nil || err != errNotLoggedUser {
 		test.Errorf("expected trips, err to be (%v, %v) got (%v, %v)",
-			nil, notLoggedUser_err, trips, err)
+			nil, errNotLoggedUser, trips, err)
 	}
 }
 
@@ -168,9 +167,9 @@ func TestGetTripOfStranger(test *testing.T) {
 
 	trips, err := svc.GetTripByUser(mu)
 
-	if trips != nil || !errors.Is(err, dao_err) {
+	if trips != nil || !errors.Is(err, errDao) {
 		test.Errorf("expected trips, err to be (%v, %v) got (%v, %v)",
-			nil, dao_err, trips, dao_err)
+			nil, errDao, trips, errDao)
 	}
 }
 
@@ -211,6 +210,6 @@ func TestGetTripOfFriend(test *testing.T) {
 
 	if len(trips) != 2 || err != nil {
 		test.Errorf("expected trips, err to be (%v, %v) got (%v, %v)",
-			nil, dao_err, trips, dao_err)
+			nil, errDao, trips, errDao)
 	}
 }
