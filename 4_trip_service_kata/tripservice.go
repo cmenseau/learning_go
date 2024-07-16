@@ -4,24 +4,25 @@ import (
 	"github.com/pkg/errors"
 )
 
-var session *UserSession
+var loggedUserGetter LoggedUserGetter = &UserSession{}
 var dao_err = errors.New("TripDAO should not be invoked on an unit test.")
 var userSession_err = errors.New("UserSession.GetLoggedUser() should not be called in an unit test")
+var notLoggedUser_err = errors.New("user not logged in")
 
 type Trip struct {
 }
 
 type Service struct {
-	tripDAO *Dao
+	tripDAO DaoTripFinder
 }
 
-func (service *Service) GetTripByUser(user *User) ([]Trip, error) {
+func (service *Service) GetTripByUser(user Friender) ([]Trip, error) {
 	var trips []Trip
 	friends, err := user.Friends()
 	if err != nil {
 		return trips, err
 	}
-	loggedUser, err := session.GetLoggedUser()
+	loggedUser, err := loggedUserGetter.GetLoggedUser()
 	if err != nil {
 		return trips, err
 	}
@@ -38,8 +39,12 @@ func (service *Service) GetTripByUser(user *User) ([]Trip, error) {
 		}
 		return trips, err
 	} else {
-		return trips, errors.New("user not logged in")
+		return trips, notLoggedUser_err
 	}
+}
+
+type LoggedUserGetter interface {
+	GetLoggedUser() (*User, error)
 }
 
 type UserSession struct {
@@ -48,6 +53,9 @@ type UserSession struct {
 func (userSession *UserSession) GetLoggedUser() (*User, error) {
 	return nil, userSession_err
 }
+
+type Friender interface {
+	Friends() ([]User, error)
 }
 
 type User struct {
@@ -58,9 +66,13 @@ func (user *User) Friends() ([]User, error) {
 	return friends, nil
 }
 
+type DaoTripFinder interface {
+	FindTripByUser(user Friender) ([]Trip, error)
+}
+
 type Dao struct {
 }
 
-func (dao *Dao) FindTripByUser(user *User) ([]Trip, error) {
+func (dao *Dao) FindTripByUser(user Friender) ([]Trip, error) {
 	return nil, dao_err
 }
