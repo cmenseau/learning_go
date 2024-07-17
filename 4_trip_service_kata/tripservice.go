@@ -19,12 +19,15 @@ type Service struct {
 func (service *Service) GetTripByUser(user Extrovert) ([]Trip, error) {
 	loggedUser, err := service.GetCurrentLoggedUser()
 
-	if err == nil {
-		if loggedUser.IsFriendWith(user) {
-			return service.tripFinder.FindTripByUser(user)
-		}
+	if err != nil {
+		return nil, err
 	}
-	return nil, err
+
+	if loggedUser.IsFriendWith(user) {
+		return service.tripFinder.FindTripByUser(user)
+	}
+
+	return nil, nil
 }
 
 func (service *Service) GetCurrentLoggedUser() (*User, error) {
